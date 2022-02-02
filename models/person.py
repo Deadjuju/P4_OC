@@ -33,28 +33,49 @@ class Person:
 class Player(Person):
     """Class Player"""
 
-    DB = TinyDB(Path(__file__).resolve().parent / 'db.json', indent=4)
+    # Save in DataBase at Roots
+    DB = TinyDB(Path(__file__).resolve().parent.parent / 'db.json', indent=4)
 
-    def __init__(self, first_name, last_name, gender, date_of_birth, ranking: int):
+    def __init__(self, first_name, last_name, gender, date_of_birth, ranking: int, score=0):
         """Has a first_name, a last_name, a gender and a birthday
         Has a ranking"""
         super().__init__(first_name, last_name, gender, date_of_birth)
         self.ranking = ranking
-        self.score: float = 0
+        self.score: float = score
 
     def __str__(self) -> str:
         return f"{super().__str__()} #{self.ranking}"
+
+    @property
+    def db_instance(self):
+        player_table = Player.DB.table("Players")
+        return player_table.get((where('first_name') == self.first_name)
+                                & (where('last_name') == self.last_name)
+                                & (where('date_of_birth') == self.date_of_birth))
+
+    @classmethod
+    def search_player(cls, first_name, last_name, date_of_birth):
+        player_table = Player.DB.table("Players")
+        player_dictionary = player_table.search((where('first_name') == first_name)
+                                                & (where('last_name') == last_name)
+                                                & (where('date_of_birth') == date_of_birth))
+        return player_dictionary
 
     def save(self) -> int:
         player_table = Player.DB.table("Players")
         return player_table.insert(self.__dict__)
 
+    def exists(self) -> bool:
+        return bool(self.db_instance)
+
 
 if __name__ == "__main__":
     player_1 = Player(first_name="Julien",
                       last_name="Garcia",
-                      gender="male",
+                      gender="Male",
                       date_of_birth="04/08/1991",
                       ranking=1)
 
     print(player_1)
+    print(player_1.db_instance)
+

@@ -22,7 +22,7 @@ class Controller:
                 return "off"
             else:
                 print()
-                print("Merci de renseigner 1 ou 2")
+                print("Merci de renseigner 1, 2 ou 3.")
 
     def _ask_first_name(self):
         while True:
@@ -73,30 +73,56 @@ class Controller:
                         gender=gender,
                         date_of_birth=date_of_birth,
                         ranking=1)
+        if player.exists():
+            print("Ce joueur existe déjà.")
+            return
         return player
 
     def _ask_save_player(self, player):
-        print("Voulez-vous sauvegarder le joueur: ")
-        print(player.__dict__)
-        response = self.view.prompt_yes_or_no().lower()
-        if response == "y" or response == "yes" or response == "oui" or response == "o":
-            return True
-        else:
-            return False
+        return self.view.prompt_save_or_abort(message="Voulez-vous sauvegarder le joueur: ",
+                                              subject=player.__dict__)
+
+    def _find_player(self):
+        first_name = self._ask_first_name()
+        last_name = self._ask_last_name()
+        date_of_birth = self._ask_birthday()
+        player = Player.search_player(first_name=first_name, last_name=last_name, date_of_birth=date_of_birth)[0]
+        print("-" * 50)
+        print("Joueur trouvé:")
+        print(player)
+        return player
 
     def players_manager(self):
-        while True:
+        players_manager_run = True
+        while players_manager_run:
             choice = self._check_ask_create_player_or_upload_ranking()
             if choice == "off":
                 print("Au revoir")
                 sys.exit()
+
+            elif choice == "return":
+                print("---- RETOUR EN ARRIERE ----")
+                return
+
             elif choice == "1":
                 print("-" * 50)
                 print("Création d'un joueur")
                 player = self._create_player()
-                if self._ask_save_player(player=player):
-                    print("SAUVEGARDONS")
-                    player.save()
-                else:
-                    print("Abandons")
+                if player is not None:
+                    if self._ask_save_player(player=player):
+                        player.save()
 
+            elif choice == "2":
+                print("-" * 50)
+                print("----MISE A JOUR----")
+                player = self._find_player()
+                player_in_db = Player(**player)
+                print(player_in_db)
+                print(player_in_db.exists())
+
+
+if __name__ == "__main__":
+    from views.base import PlayerView
+    player_manager = PlayerView()
+    player_control = Controller(view=player_manager)
+    player_control.players_manager()
