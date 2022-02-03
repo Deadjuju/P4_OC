@@ -11,7 +11,7 @@ class Controller:
 
     def _check_ask_create_player_or_upload_ranking(self):
         while True:
-            choice = self.view.ask_create_player_or_upload_ranking()
+            choice = self.view.prompt_to_create_player_or_upload_ranking()
             if choice == "1":
                 return "1"
             elif choice == "2":
@@ -82,11 +82,11 @@ class Controller:
         return self.view.prompt_save_or_abort(message="Voulez-vous sauvegarder le joueur: ",
                                               subject=player.__dict__)
 
-    def _edit_a_player(self):
+    def _find_player_and_player_id(self):
         first_name = self._ask_first_name()
         last_name = self._ask_last_name()
         try:
-            # list of players who have the same characteristics 
+            # list of players who have the same characteristics
             players = Player.search_player(first_name=first_name,
                                            last_name=last_name)
         except IndexError:
@@ -94,12 +94,30 @@ class Controller:
             return
         if len(players) == 1:
             player = players[0]
-            print("-" * 50)
-            print("Joueur trouvé:")
-            print(player)
-            print(f"ID: {player.doc_id}")
-            player_in_db = Player(**player)
-            return player_in_db
+            return player.doc_id, player
+
+    def _edit_or_delete_player(self):
+        while True:
+            choice = self.view.prompt_to_edit_or_delete_player()
+            if choice == "1":
+                return "edit"
+            elif choice == "2":
+                return "delete"
+            else:
+                print()
+                print("--> INFORMATION: Cette réponse n'est pas autorisé.")
+
+    def _edit_score_or_delete_a_player(self):
+        player_in_db = self._find_player_and_player_id()
+        player_id = player_in_db[0]
+        player = player_in_db[1]
+        instance_player = Player(**player)
+        choice = self._edit_or_delete_player()
+        if choice == "edit":
+            pass
+        if choice == "delete":
+            pass
+        return instance_player
 
     def players_manager(self):
         players_manager_run = True
@@ -124,7 +142,7 @@ class Controller:
             elif choice == "2":
                 print("-" * 50)
                 print("----MISE A JOUR----")
-                player = self._edit_a_player()
+                player = self._edit_score_or_delete_a_player()
                 if player is not None:
                     print(player)
 
