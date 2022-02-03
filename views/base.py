@@ -6,7 +6,7 @@ CURSOR = "\n----->  || "
 class PlayerView:
     """Implement the other views."""
 
-    def ask_create_player_or_upload_ranking(self):
+    def prompt_to_create_player_or_upload_ranking(self):
         print("Que voulez-vous faire? Tapez:")
         return input("1  --> Pour créer un joueur \n"
                      "2  --> Pour mettre à jour le classement\n"
@@ -47,3 +47,11 @@ class PlayerView:
         else:
             print("--- ABANDONS ---")
             return False
+
+    def prompt_to_edit_or_delete_player(self):
+        """Ask Edit a Player or delete a Player"""
+        print("Voulez-vous:\n-"
+              "> 1 pour changer le score d'un joueur\n"
+              "-> 2 pour supprimer un joueur")
+        return input(f"1/2 {CURSOR}")
+

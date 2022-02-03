@@ -82,15 +82,24 @@ class Controller:
         return self.view.prompt_save_or_abort(message="Voulez-vous sauvegarder le joueur: ",
                                               subject=player.__dict__)
 
-    def _find_player(self):
+    def _edit_a_player(self):
         first_name = self._ask_first_name()
         last_name = self._ask_last_name()
-        date_of_birth = self._ask_birthday()
-        player = Player.search_player(first_name=first_name, last_name=last_name, date_of_birth=date_of_birth)[0]
-        print("-" * 50)
-        print("Joueur trouvé:")
-        print(player)
-        return player
+        try:
+            # list of players who have the same characteristics 
+            players = Player.search_player(first_name=first_name,
+                                           last_name=last_name)
+        except IndexError:
+            print("Ce joueur n'existe pas.")
+            return
+        if len(players) == 1:
+            player = players[0]
+            print("-" * 50)
+            print("Joueur trouvé:")
+            print(player)
+            print(f"ID: {player.doc_id}")
+            player_in_db = Player(**player)
+            return player_in_db
 
     def players_manager(self):
         players_manager_run = True
@@ -115,14 +124,14 @@ class Controller:
             elif choice == "2":
                 print("-" * 50)
                 print("----MISE A JOUR----")
-                player = self._find_player()
-                player_in_db = Player(**player)
-                print(player_in_db)
-                print(player_in_db.exists())
+                player = self._edit_a_player()
+                if player is not None:
+                    print(player)
 
 
 if __name__ == "__main__":
     from views.base import PlayerView
+
     player_manager = PlayerView()
     player_control = Controller(view=player_manager)
     player_control.players_manager()
