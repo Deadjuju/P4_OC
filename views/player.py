@@ -66,3 +66,23 @@ class PlayerView:
                 return int(new_score_str)
             print()
             print("Merci de rentrer un nombre.")
+
+    @classmethod
+    def show_the_player_found(cls, player: bool):
+        if player:
+            print(f"|{'-' * 50}|\n"
+                  f"{player}\n"
+                  f"|{'-' * 50}|")
+        else:
+            print(f"|{'-' * 50}|\n"
+                  "|--> ⚠️INFORMATION ⚠️: Ce joueur n'existe pas.\n"
+                  f"|{'-' * 50}|")
+
+
+    @classmethod
+    def print_the_edit_delete_choice(cls, choice):
+        if choice == "edit":
+            print("Classement du joueur correctement mis à jour")
+        if choice == "delete":
+            print("Joueur correctement supprimé")
+
