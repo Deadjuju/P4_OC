@@ -50,15 +50,13 @@ class Player(Person):
     def db_instance(self):
         player_table = Player.DB.table("Players")
         return player_table.get((where('first_name') == self.first_name)
-                                & (where('last_name') == self.last_name)
-                                & (where('date_of_birth') == self.date_of_birth))
+                                & (where('last_name') == self.last_name))
 
     @classmethod
-    def search_player(cls, first_name, last_name, date_of_birth):
+    def search_player(cls, first_name, last_name):
         player_table = Player.DB.table("Players")
         player_dictionary = player_table.search((where('first_name') == first_name)
-                                                & (where('last_name') == last_name)
-                                                & (where('date_of_birth') == date_of_birth))
+                                                & (where('last_name') == last_name))
         return player_dictionary
 
     def save(self) -> int:
