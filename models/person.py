@@ -35,6 +35,7 @@ class Player(Person):
 
     # Save in DataBase at Roots
     DB = TinyDB(Path(__file__).resolve().parent.parent / 'db.json', indent=4)
+    PLAYERS_TABLE = DB.table("Players")
 
     def __init__(self, first_name, last_name, gender, date_of_birth, ranking: int, score=0):
         """Has a first_name, a last_name, a gender and a birthday
@@ -48,15 +49,13 @@ class Player(Person):
 
     @property
     def db_instance(self):
-        player_table = Player.DB.table("Players")
-        return player_table.get((where('first_name') == self.first_name)
-                                & (where('last_name') == self.last_name))
+        return Player.PLAYERS_TABLE.get((where('first_name') == self.first_name)
+                                        & (where('last_name') == self.last_name))
 
     @classmethod
     def search_player(cls, first_name, last_name):
-        player_table = Player.DB.table("Players")
-        player_dictionary = player_table.search((where('first_name') == first_name)
-                                                & (where('last_name') == last_name))
+        player_dictionary = Player.PLAYERS_TABLE.search((where('first_name') == first_name)
+                                                        & (where('last_name') == last_name))
         return player_dictionary
 
     def save(self) -> int:
@@ -65,6 +64,9 @@ class Player(Person):
 
     def exists(self) -> bool:
         return bool(self.db_instance)
+
+    # def update_a_score(self):
+    #     table.update({'nombre': 10}, where('type') == 'navet')
 
 
 if __name__ == "__main__":
@@ -76,4 +78,3 @@ if __name__ == "__main__":
 
     print(player_1)
     print(player_1.db_instance)
-
