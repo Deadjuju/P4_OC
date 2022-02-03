@@ -37,12 +37,12 @@ class Player(Person):
     DB = TinyDB(Path(__file__).resolve().parent.parent / 'db.json', indent=4)
     PLAYERS_TABLE = DB.table("Players")
 
-    def __init__(self, first_name, last_name, gender, date_of_birth, ranking: int, score=0):
+    def __init__(self, first_name, last_name, gender, date_of_birth, ranking: int = 0, tournament_score: float = 0):
         """Has a first_name, a last_name, a gender and a birthday
-        Has a ranking"""
+        Has a ranking & a tournament score"""
         super().__init__(first_name, last_name, gender, date_of_birth)
         self.ranking = ranking
-        self.score: float = score
+        self.tournament_score = tournament_score
 
     def __str__(self) -> str:
         return f"{super().__str__()} #{self.ranking}"
@@ -65,8 +65,16 @@ class Player(Person):
     def exists(self) -> bool:
         return bool(self.db_instance)
 
-    # def update_a_score(self):
-    #     table.update({'nombre': 10}, where('type') == 'navet')
+    @classmethod
+    def update_a_ranking(cls, new_ranking, player_id):
+        player_id_list = [player_id]
+        Player.PLAYERS_TABLE.update({'ranking': new_ranking},
+                                    doc_ids=player_id_list)
+
+    @classmethod
+    def delete_a_player(cls, player_id):
+        player_id_list = [player_id]
+        Player.PLAYERS_TABLE.remove(doc_ids=player_id_list)
 
 
 if __name__ == "__main__":

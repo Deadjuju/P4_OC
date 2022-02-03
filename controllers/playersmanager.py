@@ -9,7 +9,7 @@ class Controller:
     def __init__(self, view):
         self.view = view
 
-    def _check_ask_create_player_or_upload_ranking(self):
+    def _check_ask_create_player_or_upload_score(self):
         while True:
             choice = self.view.prompt_to_create_player_or_upload_ranking()
             if choice == "1":
@@ -71,8 +71,7 @@ class Controller:
         player = Player(first_name=first_name,
                         last_name=last_name,
                         gender=gender,
-                        date_of_birth=date_of_birth,
-                        ranking=1)
+                        date_of_birth=date_of_birth)
         if player.exists():
             print("Ce joueur existe déjà.")
             return
@@ -92,7 +91,7 @@ class Controller:
             player = players[0]
             return player.doc_id, player
         if len(players) == 0:
-            print("--> INFORMATION: Ce joueur n'existe pas.")
+            print("--> ⚠️INFORMATION ⚠️: Ce joueur n'existe pas.")
             return
 
     def _edit_or_delete_player(self):
@@ -106,7 +105,7 @@ class Controller:
                 print()
                 print("--> INFORMATION: Cette réponse n'est pas autorisé.")
 
-    def _edit_score_or_delete_a_player(self):
+    def _edit_ranking_or_delete_a_player(self):
         player_in_db = self._find_player_and_player_id()
         if player_in_db is not None:
             player_id = player_in_db[0]
@@ -114,16 +113,21 @@ class Controller:
             instance_player = Player(**player)
             choice = self._edit_or_delete_player()
             if choice == "edit":
-                pass
+                new_ranking = self.view.prompt_to_change_score()
+                print(f"New score: {new_ranking}")
+                instance_player.update_a_ranking(new_ranking=new_ranking, player_id=player_id)
+                print("Correctement mis à jour")
+                return
             if choice == "delete":
-                pass
-            return instance_player
-        return
+                instance_player.delete_a_player(player_id=player_id)
+                print("Correctement supprimé")
+                return
+            return
 
     def players_manager(self):
         players_manager_run = True
         while players_manager_run:
-            choice = self._check_ask_create_player_or_upload_ranking()
+            choice = self._check_ask_create_player_or_upload_score()
             if choice == "off":
                 print("Au revoir")
                 sys.exit()
@@ -143,9 +147,7 @@ class Controller:
             elif choice == "2":
                 print("-" * 50)
                 print("----MISE A JOUR----")
-                player = self._edit_score_or_delete_a_player()
-                if player is not None:
-                    print(player)
+                self._edit_ranking_or_delete_a_player()
 
 
 if __name__ == "__main__":
