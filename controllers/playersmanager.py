@@ -85,16 +85,15 @@ class Controller:
     def _find_player_and_player_id(self):
         first_name = self._ask_first_name()
         last_name = self._ask_last_name()
-        try:
-            # list of players who have the same characteristics
-            players = Player.search_player(first_name=first_name,
-                                           last_name=last_name)
-        except IndexError:
-            print("Ce joueur n'existe pas.")
-            return
+        # list of players who have the same characteristics
+        players = Player.search_player(first_name=first_name,
+                                       last_name=last_name)
         if len(players) == 1:
             player = players[0]
             return player.doc_id, player
+        if len(players) == 0:
+            print("--> INFORMATION: Ce joueur n'existe pas.")
+            return
 
     def _edit_or_delete_player(self):
         while True:
@@ -109,15 +108,17 @@ class Controller:
 
     def _edit_score_or_delete_a_player(self):
         player_in_db = self._find_player_and_player_id()
-        player_id = player_in_db[0]
-        player = player_in_db[1]
-        instance_player = Player(**player)
-        choice = self._edit_or_delete_player()
-        if choice == "edit":
-            pass
-        if choice == "delete":
-            pass
-        return instance_player
+        if player_in_db is not None:
+            player_id = player_in_db[0]
+            player = player_in_db[1]
+            instance_player = Player(**player)
+            choice = self._edit_or_delete_player()
+            if choice == "edit":
+                pass
+            if choice == "delete":
+                pass
+            return instance_player
+        return
 
     def players_manager(self):
         players_manager_run = True
