@@ -151,7 +151,7 @@ class Controller:
 
 
 if __name__ == "__main__":
-    from views.base import PlayerView
+    from views.player import PlayerView
 
     player_manager = PlayerView()
     player_control = Controller(view=player_manager)

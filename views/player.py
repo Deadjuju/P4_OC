@@ -53,7 +53,7 @@ class PlayerView:
     def prompt_to_edit_or_delete_player(self):
         """Ask Edit a Player or delete a Player"""
         print("Voulez-vous:\n-"
-              "> 1 pour changer le classement d'un joueur\n"
+              "-> 1 pour changer le classement d'un joueur\n"
               "-> 2 pour supprimer un joueur")
         return input(f"1/2 {CURSOR}")
 
