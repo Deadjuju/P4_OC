@@ -26,8 +26,7 @@ class Controller:
             elif choice == "off":
                 return "off"
             else:
-                print()
-                print("Merci de renseigner 1, 2 ou 3.")
+                self.view.warning(message="Merci de renseigner 1, 2 ou 3.")
 
     def _ask_first_name(self) -> str:
         """Ask and control of the first name field
@@ -41,23 +40,7 @@ class Controller:
             if first_name != "":
                 return first_name
             else:
-                print()
-                print("Le champ - prénom - ne peut pas être vide.")
-
-    def _ask_last_name(self) -> str:
-        """Ask and control of the last name field
-
-                Returns:
-                    last_name (str): last name
-                """
-
-        while True:
-            last_name = self.view.prompt_for_player_last_name().title()
-            if last_name != "":
-                return last_name
-            else:
-                print()
-                print("Le champ - nom de famille - ne peut pas être vide.")
+                self.view.warning(message="Le champ - prénom - ne peut pas être vide.")
 
     def _ask_gender(self) -> str:
         """Ask and control of the gender field
@@ -73,8 +56,7 @@ class Controller:
             elif gender == "homme" or gender == "male":
                 return "Male"
             else:
-                print()
-                print("Merci de renseigner un genre valide.")
+                self.view.warning(message="Merci de renseigner un genre valide.")
 
     def _ask_birthday(self) -> str:
         """Control of the birthday field
@@ -89,8 +71,21 @@ class Controller:
                 datetime.datetime.strptime(date_of_birth, '%d/%m/%Y')
                 return date_of_birth
             except ValueError:
-                print()
-                print("La date doit être saisie au format jj/mm/aaaa")
+                self.view.warning(message="La date doit être saisie au format jj/mm/aaaa.")
+
+    def _ask_last_name(self) -> str:
+        """Ask and control of the last name field
+
+                Returns:
+                    last_name (str): last name
+                """
+
+        while True:
+            last_name = self.view.prompt_for_player_last_name().title()
+            if last_name != "":
+                return last_name
+            else:
+                self.view.warning(message="Le champ - nom de famille - ne peut pas être vide.")
 
     def _create_player(self) -> Player:
         """Create an instance of Player
@@ -137,8 +132,10 @@ class Controller:
             elif choice == "2":
                 return "delete"
             else:
+                self.view.information(message="Cette réponse n'est pas autorisé.")
+
                 print()
-                print("--> INFORMATION: Cette réponse n'est pas autorisé.")
+                print("")
 
     def _edit_ranking_or_delete_a_player(self, player):
         """Make action to edit a player or to delete it
@@ -166,27 +163,25 @@ class Controller:
         while players_manager_run:
             choice = self._check_ask_create_player_or_upload_score()
             if choice == "off":
-                print("Au revoir")
+                self.view.information(message="A BIENTOT!!!")
                 sys.exit()
 
             elif choice == "return":
-                print("---- RETOUR EN ARRIERE ----")
+                self.view.information(message="---- RETOUR EN ARRIERE ----")
                 return
 
             elif choice == "1":
-                print("-" * 50)
-                print("Création d'un joueur")
+                self.view.information(message="Création d'un joueur: ")
                 player = self._create_player()
                 if not player.exists():
                     if self.view.prompt_save_or_abort(message="Voulez-vous sauvegarder le joueur: ",
                                                       subject=player.__dict__):
                         player.save()
                 else:
-                    print("Ce joueur existe déjà.")
+                    self.view.warning(message="Ce joueur existe déjà.")
 
             elif choice == "2":
-                print("-" * 50)
-                print("----MISE A JOUR----")
+                self.view.warning(message="---- MISE A JOUR JOUEUR----")
                 players = self._find_players_list()
                 if len(players) == 1:
                     player = players[0]

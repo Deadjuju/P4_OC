@@ -1,45 +1,52 @@
-"""Base view."""
+"""Player view."""
 
-CURSOR = "\n----->  || "
+from views.base import View
 
 
-class PlayerView:
+class PlayerView(View):
     """Implement the other views."""
 
-    def prompt_to_create_player_or_upload_ranking(self):
+    @classmethod
+    def prompt_to_create_player_or_upload_ranking(cls):
         print("Que voulez-vous faire? Tapez:")
         return input(f"|{'-' * 42}|\n"
                      "| 1  --> Pour créer un joueur -------------|\n"
                      "| 2  --> Pour mettre à jour le classement -|\n"
                      "| 3  --> Pour revenir en arrière ----------|\n"
                      f"|{'-' * 42}|"
-                     f"{CURSOR}")
+                     f"{View.CURSOR}")
 
-    def prompt_for_player_first_name(self):
+    @classmethod
+    def prompt_for_player_first_name(cls):
         """Prompt for a first name."""
         return input(f"Prénom du joueur: "
-                     f"{CURSOR}")
+                     f"{View.CURSOR}")
 
-    def prompt_for_player_last_name(self):
+    @classmethod
+    def prompt_for_player_last_name(cls):
         """Prompt for a last name."""
         return input("Nom de famille du joueur: "
-                     f"{CURSOR}")
+                     f"{View.CURSOR}")
 
-    def prompt_for_player_gender(self):
+    @classmethod
+    def prompt_for_player_gender(cls):
         """Prompt for a gender."""
         return input("Genre du joueur (Femme / Homme): "
-                     f"{CURSOR}")
+                     f"{View.CURSOR}")
 
-    def prompt_for_player_date_of_birth(self):
+    @classmethod
+    def prompt_for_player_date_of_birth(cls):
         """Prompt for a birthday."""
         return input("Date de naissance du joueur (Format: jj/mm/aaaa): "
-                     f"{CURSOR}")
+                     f"{View.CURSOR}")
 
-    def prompt_yes_or_no(self):
+    @classmethod
+    def prompt_yes_or_no(cls):
         """Prompt Yes or No"""
-        return input(f"Y/n{CURSOR}")
+        return input(f"Y/n{View.CURSOR}")
 
-    def prompt_save_or_abort(self, message, subject):
+    @classmethod
+    def prompt_save_or_abort(cls, message, subject):
         print(message)
         print(subject)
         response = self.prompt_yes_or_no().lower()
@@ -50,18 +57,20 @@ class PlayerView:
             print("--- ABANDONS ---")
             return False
 
-    def prompt_to_edit_or_delete_player(self):
+    @classmethod
+    def prompt_to_edit_or_delete_player(cls):
         """Ask Edit a Player or delete a Player"""
-        print("Voulez-vous:\n-"
-              "-> 1 pour changer le classement d'un joueur\n"
-              "-> 2 pour supprimer un joueur")
-        return input(f"1/2 {CURSOR}")
+        print("Voulez-vous:\n"
+              "--> 1 pour changer le classement d'un joueur\n"
+              "--> 2 pour supprimer un joueur")
+        return input(f"1/2 {View.CURSOR}")
 
-    def prompt_to_change_score(self):
+    @classmethod
+    def prompt_to_change_score(cls):
         """Ask for a new rating"""
         while True:
             new_score_str = input("Quel est le nouveau classement de ce joueur?"
-                                  f"\n{CURSOR}")
+                                  f"\n{View.CURSOR}")
             if new_score_str.isnumeric():
                 return int(new_score_str)
             print()
