@@ -1,13 +1,14 @@
 import datetime
 import sys
 
+from controllers.base import Controller
 from models.person import Player
 
 
-class Controller:
+class PlayerController(Controller):
 
     def __init__(self, view):
-        self.view = view
+        super().__init__(view)
 
     def _check_ask_create_player_or_upload_score(self) -> str:
         """User choice control which allows to select the option to execute
@@ -29,18 +30,16 @@ class Controller:
                 self.view.warning(message="Merci de renseigner 1, 2 ou 3.")
 
     def _ask_first_name(self) -> str:
-        """Ask and control of the first name field
+        """Return the first name of a player"""
+        first_name = self.view.prompt_for_player_first_name
+        return self._ask_and_check_field(field=first_name,
+                                         message="Le champ - prénom - ne peut pas être vide.").title()
 
-                Returns:
-                    first_name (str): first name
-                """
-
-        while True:
-            first_name = self.view.prompt_for_player_first_name().title()
-            if first_name != "":
-                return first_name
-            else:
-                self.view.warning(message="Le champ - prénom - ne peut pas être vide.")
+    def _ask_last_name(self) -> str:
+        """Return the last name of a player"""
+        last_name = self.view.prompt_for_player_last_name
+        return self._ask_and_check_field(field=last_name,
+                                         message="Le champ - nom de famille - ne peut pas être vide.").title()
 
     def _ask_gender(self) -> str:
         """Ask and control of the gender field
@@ -59,33 +58,9 @@ class Controller:
                 self.view.warning(message="Merci de renseigner un genre valide.")
 
     def _ask_birthday(self) -> str:
-        """Control of the birthday field
-
-                Returns:
-                    date_of_birth (str): date of birth
-                """
-
-        while True:
-            date_of_birth = self.view.prompt_for_player_date_of_birth()
-            try:
-                datetime.datetime.strptime(date_of_birth, '%d/%m/%Y')
-                return date_of_birth
-            except ValueError:
-                self.view.warning(message="La date doit être saisie au format jj/mm/aaaa.")
-
-    def _ask_last_name(self) -> str:
-        """Ask and control of the last name field
-
-                Returns:
-                    last_name (str): last name
-                """
-
-        while True:
-            last_name = self.view.prompt_for_player_last_name().title()
-            if last_name != "":
-                return last_name
-            else:
-                self.view.warning(message="Le champ - nom de famille - ne peut pas être vide.")
+        """Returns the date_of_birth (str)"""
+        birth_date = self.view.prompt_for_player_date_of_birth
+        return self._ask_and_check_field_date(field=birth_date)
 
     def _create_player(self) -> Player:
         """Create an instance of Player
@@ -195,5 +170,5 @@ if __name__ == "__main__":
     from views.player import PlayerView
 
     player_manager = PlayerView()
-    player_control = Controller(view=player_manager)
+    player_control = PlayerController(view=player_manager)
     player_control.players_manager()

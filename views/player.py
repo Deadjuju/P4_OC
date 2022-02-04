@@ -86,7 +86,6 @@ class PlayerView(View):
                   "|--> ⚠️INFORMATION ⚠️: Ce joueur n'existe pas.\n"
                   f"|{'-' * 50}|")
 
-
     @classmethod
     def print_the_edit_delete_choice(cls, choice):
         if choice == "edit":
