@@ -1,6 +1,5 @@
 """Person and Player"""
 
-import datetime
 from pathlib import Path
 from tinydb import TinyDB, where
 
@@ -8,7 +7,11 @@ from tinydb import TinyDB, where
 class Person:
     """Person"""
 
-    def __init__(self, first_name: str, last_name: str, gender, date_of_birth):
+    def __init__(self,
+                 first_name: str,
+                 last_name: str,
+                 gender,
+                 date_of_birth):
         """Has a first_name, a last_name, a gender and a birthday"""
         self.first_name = first_name
         self.last_name = last_name
@@ -16,18 +19,15 @@ class Person:
         self.date_of_birth = date_of_birth
 
     def __repr__(self):
-        return f"{self.full_name}"
+        return f"👥 {self.full_name}"
 
     def __str__(self) -> str:
-        return f"{self.full_name}"
+        return f"👥 {self.full_name}"
 
     @property
     def full_name(self):
+        """Return Full Name"""
         return f"{self.first_name} {self.last_name}"
-
-    def _check_names(self):
-        if not (self.first_name and self.last_name):
-            raise ValueError("Le prénom et le nom de famille ne peuvent pas être vides.")
 
 
 class Player(Person):
@@ -37,52 +37,102 @@ class Player(Person):
     DB = TinyDB(Path(__file__).resolve().parent.parent / 'db.json', indent=4)
     PLAYERS_TABLE = DB.table("Players")
 
-    def __init__(self, first_name, last_name, gender, date_of_birth, ranking: int = 0, tournament_score: float = 0):
+    def __init__(self,
+                 first_name,
+                 last_name,
+                 gender,
+                 date_of_birth,
+                 ranking: int = 0,
+                 tournament_score: float = 0,
+                 already_faced=None):
         """Has a first_name, a last_name, a gender and a birthday
-        Has a ranking & a tournament score"""
+        Has a ranking, a tournament score and a list Already_faced"""
         super().__init__(first_name, last_name, gender, date_of_birth)
+        if already_faced is None:
+            already_faced = []
         self.ranking = ranking
         self.tournament_score = tournament_score
+        self.already_faced = already_faced
 
     def __str__(self) -> str:
         return f"{super().__str__()} #{self.ranking}"
 
+    def __repr__(self) -> str:
+        return f"{super().__str__()} - #{self.ranking} - 🎂 {self.date_of_birth}"
+
     @property
     def db_instance(self):
+        """ Return an instance of player from the database, or None
+
+                Returns:
+                    (dict): instance of player
+                """
         return Player.PLAYERS_TABLE.get((where('first_name') == self.first_name)
                                         & (where('last_name') == self.last_name))
 
     @classmethod
-    def search_player(cls, first_name, last_name):
-        player_dictionary = Player.PLAYERS_TABLE.search((where('first_name') == first_name)
-                                                        & (where('last_name') == last_name))
-        return player_dictionary
+    def search_player(cls, first_name, last_name) -> list:
+        """List of players with same characteristics
 
-    def save(self) -> int:
-        player_table = Player.DB.table("Players")
-        return player_table.insert(self.__dict__)
+                Args:
+                    first_name (str): first name of player
+                    last_name (str): last name of player
+                Returns:
+                    list_players_dictionary (list): players
 
-    def exists(self) -> bool:
-        return bool(self.db_instance)
+                """
+
+        list_players_dictionary = Player.PLAYERS_TABLE.search((where('first_name') == first_name)
+                                                              & (where('last_name') == last_name))
+        return list_players_dictionary
 
     @classmethod
-    def update_a_ranking(cls, new_ranking, player_id):
+    def update_a_ranking(cls, new_ranking: int, player_id: int):
+        """update a ranking in database
+
+                Args:
+                    new_ranking (int): new ranking
+                    player_id (int): id of player
+                """
         player_id_list = [player_id]
         Player.PLAYERS_TABLE.update({'ranking': new_ranking},
                                     doc_ids=player_id_list)
 
     @classmethod
     def delete_a_player(cls, player_id):
+        """delete a player from database
+
+                Args:
+                    player_id (int): id of player
+                """
         player_id_list = [player_id]
         Player.PLAYERS_TABLE.remove(doc_ids=player_id_list)
 
+    def save(self) -> int:
+        """ Save an instance of a player in the database
+
+                Returns:
+                    (int): id of player in database
+                """
+        player_table = Player.DB.table("Players")
+        return player_table.insert(self.__dict__)
+
+    def exists(self) -> bool:
+        """ Return True if instance exist in database
+
+                Returns:
+                    (bool)
+                """
+
+        return bool(self.db_instance)
+
 
 if __name__ == "__main__":
-    player_1 = Player(first_name="Julien",
+    player_1 = Player(first_name="Robert",
                       last_name="Garcia",
                       gender="Male",
                       date_of_birth="04/08/1991",
                       ranking=1)
 
     print(player_1)
-    print(player_1.db_instance)
+    print(player_1.__repr__())
