@@ -109,19 +109,6 @@ class Controller:
                         date_of_birth=date_of_birth)
         return player
 
-    def _ask_save_player(self, player) -> str:
-        """Ask to register the instance of Player in database
-
-                Args:
-                    player (Player): BeautifulSoup object pointing to the table of characteristics
-
-                Returns:
-                    (str): yes or no
-                """
-
-        return self.view.prompt_save_or_abort(message="Voulez-vous sauvegarder le joueur: ",
-                                              subject=player.__dict__)
-
     def _find_players_list(self) -> list:
         """Find in database the list of players who have the same characteristics
 
@@ -191,7 +178,8 @@ class Controller:
                 print("Création d'un joueur")
                 player = self._create_player()
                 if not player.exists():
-                    if self._ask_save_player(player=player):
+                    if self.view.prompt_save_or_abort(message="Voulez-vous sauvegarder le joueur: ",
+                                                      subject=player.__dict__):
                         player.save()
                 else:
                     print("Ce joueur existe déjà.")
