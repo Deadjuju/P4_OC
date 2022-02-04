@@ -45,8 +45,7 @@ class PlayerView(View):
         """Prompt Yes or No"""
         return input(f"Y/n{View.CURSOR}")
 
-    @classmethod
-    def prompt_save_or_abort(cls, message, subject):
+    def prompt_save_or_abort(self, message, subject):
         print(message)
         print(subject)
         response = self.prompt_yes_or_no().lower()
