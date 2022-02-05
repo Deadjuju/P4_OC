@@ -36,3 +36,15 @@ class Controller:
                 return user_choice
             except ValueError:
                 self.view.warning(message=f"La date doit être saisie au format {DATE_FORMAT[1]}.")
+
+    def check_yes_or_no(self, message, subject):
+        print(message)
+        print(subject)
+        response = self.view.prompt_yes_or_no().lower()
+        if response == "y" or response == "yes" or response == "oui" or response == "o":
+            print("--- SAUVEGARDE ---")
+            return True
+        else:
+            print("--- ABANDONS ---")
+            return False
+

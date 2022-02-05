@@ -106,8 +106,8 @@ class TournamentController(Controller):
                 tournament.competing_players = participants
                 print(tournament.__dict__)
                 if not tournament.exists():
-                    if self.view.prompt_save_or_abort(message="Voulez-vous sauvegarder le tournois: ",
-                                                      subject=tournament.__dict__):
+                    if self.check_yes_or_no(message="Voulez-vous sauvegarder le tournois: ",
+                                            subject=tournament.__dict__):
                         tournament.save()
                 else:
                     self.view.warning(message="Ce tournois existe déjà.")

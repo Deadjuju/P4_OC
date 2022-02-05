@@ -142,8 +142,8 @@ class PlayerController(Controller):
                 self.view.information(message="Création d'un joueur: ")
                 player = self._create_player()
                 if not player.exists():
-                    if self.view.prompt_save_or_abort(message="Voulez-vous sauvegarder le joueur: ",
-                                                      subject=player.__dict__):
+                    if self.check_yes_or_no(message="Voulez-vous sauvegarder le joueur: ",
+                                            subject=player.__dict__):
                         player.save()
                 else:
                     self.view.warning(message="Ce joueur existe déjà.")
