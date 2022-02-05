@@ -63,11 +63,11 @@ class PlayerView(View):
     def show_the_player_found(cls, player: bool):
         if player:
             print(f"|{'-' * 70}|\n"
-                  f"|--> ⚠️INFORMATION ⚠️: Joueur trouvé dans la base de donnée.\n"
+                  f"|--> ℹ️INFORMATION ℹ️: Joueur trouvé dans la base de donnée.\n"
                   f"|{'-' * 70}|")
         else:
             print(f"|{'-' * 50}|\n"
-                  "|--> ⚠️INFORMATION ⚠️: Ce joueur n'existe pas.\n"
+                  "|--> ℹ️INFORMATION ℹ️: Ce joueur n'existe pas.\n"
                   f"|{'-' * 50}|")
 
     @classmethod

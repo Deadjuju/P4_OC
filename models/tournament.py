@@ -1,21 +1,13 @@
 """Tournament"""
-from pathlib import Path
-from tinydb import TinyDB, where
 
-from models.person import Player
-from models.timecontrol import TimeControl
+from tinydb import where
+
+from initialisation import DEFAULT_NUMBER_OF_TURNS, TOURNAMENTS_TABLE
 from models.turn import Turn
-
-TOURNAMENTS_DATABASE_NAME = "Tournaments"
-DEFAULT_NUMBER_OF_TURNS = 4
 
 
 class Tournament:
     """Class Tournament"""
-
-    # Save in DataBase at Roots
-    DB = TinyDB(Path(__file__).resolve().parent.parent / 'db.json', indent=4)
-    TOURNAMENTS_TABLE = DB.table(TOURNAMENTS_DATABASE_NAME)
 
     def __init__(self,
                  tournament_name: str,
@@ -41,10 +33,10 @@ class Tournament:
         self.is_finish = is_finish
 
     def __str__(self) -> str:
-        return f"{self.tournament_name} - {self.place}\nDate: {self.date}\n{self.description}"
+        return f"🏆 {self.tournament_name} - {self.place}\nDate: {self.date}\n{self.description}"
 
     def __repr__(self) -> str:
-        return f"{self.tournament_name} - {self.place}\nDate: {self.date}\n{self.description}"
+        return str(self.__str__())
 
     @property
     def db_instance(self):
@@ -53,8 +45,8 @@ class Tournament:
                 Returns:
                     (dict): instance of tournament
                 """
-        return Tournament.TOURNAMENTS_TABLE.get((where('tournament_name') == self.tournament_name)
-                                                & (where('place') == self.place))
+        return TOURNAMENTS_TABLE.get((where('tournament_name') == self.tournament_name)
+                                     & (where('place') == self.place))
 
     @property
     def date(self) -> tuple:
@@ -66,7 +58,7 @@ class Tournament:
                 Returns:
                     (int): id of tournament in database
                 """
-        tournament_table = Tournament.DB.table(TOURNAMENTS_DATABASE_NAME)
+        tournament_table = TOURNAMENTS_TABLE
         return tournament_table.insert(self.__dict__)
 
     def exists(self) -> bool:

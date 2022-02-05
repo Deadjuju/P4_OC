@@ -1,7 +1,8 @@
 """Person and Player"""
 
-from pathlib import Path
-from tinydb import TinyDB, where
+from tinydb import where
+
+from initialisation import PLAYERS_TABLE
 
 
 class Person:
@@ -33,10 +34,6 @@ class Person:
 class Player(Person):
     """Class Player"""
 
-    # Save in DataBase at Roots
-    DB = TinyDB(Path(__file__).resolve().parent.parent / 'db.json', indent=4)
-    PLAYERS_TABLE = DB.table("Players")
-
     def __init__(self,
                  first_name,
                  last_name,
@@ -67,8 +64,8 @@ class Player(Person):
                 Returns:
                     (dict): instance of player
                 """
-        return Player.PLAYERS_TABLE.get((where('first_name') == self.first_name)
-                                        & (where('last_name') == self.last_name))
+        return PLAYERS_TABLE.get((where('first_name') == self.first_name)
+                                 & (where('last_name') == self.last_name))
 
     @classmethod
     def search_player(cls, first_name, last_name) -> list:
@@ -82,8 +79,8 @@ class Player(Person):
 
                 """
 
-        list_players_dictionary = Player.PLAYERS_TABLE.search((where('first_name') == first_name)
-                                                              & (where('last_name') == last_name))
+        list_players_dictionary = PLAYERS_TABLE.search((where('first_name') == first_name)
+                                                       & (where('last_name') == last_name))
         return list_players_dictionary
 
     @classmethod
@@ -95,8 +92,8 @@ class Player(Person):
                     player_id (int): id of player
                 """
         player_id_list = [player_id]
-        Player.PLAYERS_TABLE.update({'ranking': new_ranking},
-                                    doc_ids=player_id_list)
+        PLAYERS_TABLE.update({'ranking': new_ranking},
+                             doc_ids=player_id_list)
 
     @classmethod
     def delete_a_player(cls, player_id):
@@ -106,7 +103,7 @@ class Player(Person):
                     player_id (int): id of player
                 """
         player_id_list = [player_id]
-        Player.PLAYERS_TABLE.remove(doc_ids=player_id_list)
+        PLAYERS_TABLE.remove(doc_ids=player_id_list)
 
     def save(self) -> int:
         """ Save an instance of a player in the database
@@ -114,7 +111,7 @@ class Player(Person):
                 Returns:
                     (int): id of player in database
                 """
-        player_table = Player.DB.table("Players")
+        player_table = PLAYERS_TABLE
         return player_table.insert(self.__dict__)
 
     def exists(self) -> bool:

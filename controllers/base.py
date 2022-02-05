@@ -1,6 +1,7 @@
 import datetime
 
-DATE_FORMAT = ('%d/%m/%Y', 'jj/mm/aaaa')
+
+from initialisation import DATE_FORMAT
 
 
 class Controller:
