@@ -26,20 +26,37 @@ class TournamentController(Controller):
             else:
                 self.view.warning(message="Merci de renseigner 1, 2 ou 3.")
 
+    def ask_and_check_time_control_field(self):
+        while True:
+            time_control_choice = self.view.prompt_for_time_control()
+            if time_control_choice == "1":
+                return "Bullet"
+            elif time_control_choice == "2":
+                return "Blitz"
+            elif time_control_choice == "3":
+                return "Coup rapide"
+            else:
+                self.view.warning(message="Merci de renseigner 1, 2 ou 3.")
+
     def _create_tournament(self) -> Tournament:
-        tournament_name = self._ask_and_check_field(field=self.view.prompt_for_tournament_name,
-                                                    message="Le champ - Place - ne peut pas être vide.").title()
-        tournament_place = self._ask_and_check_field(field=self.view.prompt_for_tournament_place,
-                                                     message="Le champ - Place - ne peut pas être vide.").title()
+        tournament_name = self._ask_and_check_field(
+            field=self.view.prompt_for_tournament_name,
+            message="Le champ - Place - ne peut pas être vide."
+        ).title()
+        tournament_place = self._ask_and_check_field(
+            field=self.view.prompt_for_tournament_place,
+            message="Le champ - Place - ne peut pas être vide."
+        ).title()
         start_date = self._ask_and_check_field_date(field=self.view.prompt_for_start_date)
         end_date = self._ask_and_check_field_date(field=self.view.prompt_for_end_date)
         description = self.view.prompt_for_description()
+        time_control = self.ask_and_check_time_control_field()
         tournament = Tournament(name=tournament_name,
                                 place=tournament_place,
                                 start_date=start_date,
                                 end_date=end_date,
-                                description=description)
-        print(tournament.__dict__)
+                                description=description,
+                                time_control=time_control)
         return tournament
 
     def get_players(self):
@@ -48,10 +65,14 @@ class TournamentController(Controller):
             inscription = True
             while inscription:
                 print(f"Joueur {i + 1}")
-                player_first_name = self._ask_and_check_field(field=self.player_view.prompt_for_player_first_name,
-                                                              message="Le champ - prénom - ne peut pas être vide.").title()
-                player_last_name = self._ask_and_check_field(field=self.player_view.prompt_for_player_last_name,
-                                                             message="Le champ - nom - ne peut pas être vide.").title()
+                player_first_name = self._ask_and_check_field(
+                    field=self.player_view.prompt_for_player_first_name,
+                    message="Le champ - prénom - ne peut pas être vide."
+                ).title()
+                player_last_name = self._ask_and_check_field(
+                    field=self.player_view.prompt_for_player_last_name,
+                    message="Le champ - nom - ne peut pas être vide."
+                ).title()
                 player = Player.search_player(first_name=player_first_name,
                                               last_name=player_last_name)
 
@@ -78,7 +99,9 @@ class TournamentController(Controller):
                 self.view.information(message="A BIENTOT!!!")
                 sys.exit()
             if choice == "1":
-                self._create_tournament()
+                tournament = self._create_tournament()
+                print(tournament)
+                print(tournament.__dict__)
                 self.get_players()
 
 

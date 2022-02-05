@@ -46,4 +46,16 @@ class TournamentView(View):
         return input(f"Entrez une description du tournois: "
                      f"{View.CURSOR}")
 
+    @classmethod
+    def prompt_for_time_control(cls):
+        """Prompt for Tournament time control's mode."""
+        return input(f"|| {'_' * 50}\n"
+                     f"|| Quel le mode de control du temps?\n"
+                     f"|| Tapez :\n"
+                     f"|| 1 --> Bullet\n"
+                     f"|| 2 --> Blitz\n"
+                     f"|| 3 --> Coup rapide\n"
+                     f"|| {'_' * 50}"
+                     f"{View.CURSOR}")
+
 
