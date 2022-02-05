@@ -29,18 +29,6 @@ class PlayerController(Controller):
             else:
                 self.view.warning(message="Merci de renseigner 1, 2 ou 3.")
 
-    def _ask_first_name(self) -> str:
-        """Return the first name of a player"""
-        first_name = self.view.prompt_for_player_first_name
-        return self._ask_and_check_field(field=first_name,
-                                         message="Le champ - prénom - ne peut pas être vide.").title()
-
-    def _ask_last_name(self) -> str:
-        """Return the last name of a player"""
-        last_name = self.view.prompt_for_player_last_name
-        return self._ask_and_check_field(field=last_name,
-                                         message="Le champ - nom de famille - ne peut pas être vide.").title()
-
     def _ask_gender(self) -> str:
         """Ask and control of the gender field
 
@@ -69,8 +57,10 @@ class PlayerController(Controller):
                     first_name (str): first name
                 """
 
-        first_name = self._ask_first_name()
-        last_name = self._ask_last_name()
+        first_name = self._ask_and_check_field(field=self.view.prompt_for_player_first_name,
+                                               message="Le champ - prénom - ne peut pas être vide.").title()
+        last_name = self._ask_and_check_field(field=self.view.prompt_for_player_last_name,
+                                              message="Le champ - nom - ne peut pas être vide.").title()
         gender = self._ask_gender()
         date_of_birth = self._ask_birthday()
         player = Player(first_name=first_name,
@@ -86,8 +76,11 @@ class PlayerController(Controller):
                     (list): list of players
                 """
 
-        first_name = self._ask_first_name()
-        last_name = self._ask_last_name()
+        first_name = self._ask_and_check_field(field=self.view.prompt_for_player_first_name,
+                                               message="Le champ - prénom - ne peut pas être vide.").title()
+        last_name = self._ask_and_check_field(field=self.view.prompt_for_player_last_name,
+                                              message="Le champ - nom - ne peut pas être vide.").title()
+
         # list of players who have the same characteristics
         players = Player.search_player(first_name=first_name,
                                        last_name=last_name)

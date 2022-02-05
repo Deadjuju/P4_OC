@@ -9,11 +9,11 @@ class PlayerView(View):
     @classmethod
     def prompt_to_create_player_or_upload_ranking(cls):
         print("Que voulez-vous faire? Tapez:")
-        return input(f"|{'-' * 42}|\n"
-                     "| 1  --> Pour créer un joueur -------------|\n"
-                     "| 2  --> Pour mettre à jour le classement -|\n"
-                     "| 3  --> Pour revenir en arrière ----------|\n"
-                     f"|{'-' * 42}|"
+        return input(f"|{'-' * 70}|\n"
+                     "| 1  -->  Pour créer un joueur   --------------------------------------|\n"
+                     "| 2  -->  Pour mettre à jour le classement / supprimer un joueur   ----|\n"
+                     "| 3  -->  Pour revenir en arrière   -----------------------------------|\n"
+                     f"|{'-' * 70}|"
                      f"{View.CURSOR}")
 
     @classmethod
@@ -78,9 +78,9 @@ class PlayerView(View):
     @classmethod
     def show_the_player_found(cls, player: bool):
         if player:
-            print(f"|{'-' * 50}|\n"
-                  f"{player}\n"
-                  f"|{'-' * 50}|")
+            print(f"|{'-' * 70}|\n"
+                  f"|--> ⚠️INFORMATION ⚠️: Joueur trouvé dans la base de donnée.\n"
+                  f"|{'-' * 70}|")
         else:
             print(f"|{'-' * 50}|\n"
                   "|--> ⚠️INFORMATION ⚠️: Ce joueur n'existe pas.\n"
