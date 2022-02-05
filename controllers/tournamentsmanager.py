@@ -51,7 +51,7 @@ class TournamentController(Controller):
         end_date = self._ask_and_check_field_date(field=self.view.prompt_for_end_date)
         description = self.view.prompt_for_description()
         time_control = self.ask_and_check_time_control_field()
-        tournament = Tournament(name=tournament_name,
+        tournament = Tournament(tournament_name=tournament_name,
                                 place=tournament_place,
                                 start_date=start_date,
                                 end_date=end_date,
@@ -89,6 +89,7 @@ class TournamentController(Controller):
                     else:
                         print("Ce joueur est déjà inscrit au tournois.")
         print(participants)
+        return participants
 
     def tournaments_manager(self):
         """execution and selection of the different choices"""
@@ -100,9 +101,16 @@ class TournamentController(Controller):
                 sys.exit()
             if choice == "1":
                 tournament = self._create_tournament()
-                print(tournament)
+                participants = self.get_players()
+                tournament.players = participants
+                tournament.competing_players = participants
                 print(tournament.__dict__)
-                self.get_players()
+                if not tournament.exists():
+                    if self.view.prompt_save_or_abort(message="Voulez-vous sauvegarder le tournois: ",
+                                                      subject=tournament.__dict__):
+                        tournament.save()
+                else:
+                    self.view.warning(message="Ce tournois existe déjà.")
 
 
 if __name__ == '__main__':
