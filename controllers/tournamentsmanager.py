@@ -4,6 +4,7 @@ from controllers.base import Controller
 from models.person import Player
 from models.tournament import Tournament
 from views.player import PlayerView
+from initialisation import DEFAULT_NUMBER_OF_TURNS
 
 
 class TournamentController(Controller):
@@ -60,6 +61,7 @@ class TournamentController(Controller):
                                 start_date=start_date,
                                 end_date=end_date,
                                 description=description,
+                                number_of_turns=DEFAULT_NUMBER_OF_TURNS,
                                 time_control=time_control)
         return tournament
 
@@ -106,12 +108,10 @@ class TournamentController(Controller):
             field=self.view.prompt_for_tournament_name,
             message="Le champ - Place - ne peut pas être vide."
         ).title()
-        print(f"NAME: {tournament_name}")
         tournament_place = self._ask_and_check_field(
             field=self.view.prompt_for_tournament_place,
             message="Le champ - Place - ne peut pas être vide."
         ).title()
-        print(f"PLACE: {tournament_place}")
 
         # list of players who have the same characteristics
         tournaments_list = Tournament.search_tournament(tournament_name=tournament_name,
@@ -146,6 +146,19 @@ class TournamentController(Controller):
                 self.view.information(message="---- CHARGER UN TOURNOIS ----")
                 tournaments_list = self._find_tournaments_list()
                 print(tournaments_list)
+                if len(tournaments_list) == 1:
+                    self.view.show_the_tournament_found(tournament=True)
+                    tournament_dict = tournaments_list[0]
+                    tournament = Tournament(**tournament_dict)
+                    print(tournament)
+                    # Vérifier si le tournois est fini ou non
+                    # Si tournois pas encore terminé:
+                        # Démarrer tour
+                        # -> Faire ToursManager
+                    # Sinon indiquer que tournois est terminé
+
+                if len(tournaments_list) == 0:
+                    self.view.show_the_tournament_found(tournament=False)
 
             if choice == "return":
                 # back

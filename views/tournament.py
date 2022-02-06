@@ -58,4 +58,16 @@ class TournamentView(View):
                      f"|| {'_' * 50}"
                      f"{View.CURSOR}")
 
+    @classmethod
+    def show_the_tournament_found(cls, tournament: bool):
+        if tournament:
+            print(f"|{'-' * 70}|\n"
+                  f"|--> ℹ️INFORMATION ℹ️: Tournois trouvé dans la base de donnée.\n"
+                  f"|{'-' * 70}|")
+        else:
+            print(f"|{'-' * 50}|\n"
+                  "|--> ℹ️INFORMATION ℹ️: Ce tournois n'existe pas dans la base de données.\n"
+                  f"|{'-' * 50}|")
+
+
 

@@ -150,12 +150,12 @@ class PlayerController(Controller):
 
             elif choice == "2":
                 self.view.warning(message="---- MISE A JOUR JOUEUR----")
-                players = self._find_players_list()
-                if len(players) == 1:
-                    player = players[0]
+                players_list = self._find_players_list()
+                if len(players_list) == 1:
+                    player = players_list[0]
                     self.view.show_the_player_found(player=True)
                     self._edit_ranking_or_delete_a_player(player=player)
-                if len(players) == 0:
+                if len(players_list) == 0:
                     self.view.show_the_player_found(player=False)
 
 

@@ -15,20 +15,31 @@ class Tournament:
                  start_date,
                  end_date,
                  description: str,
-                 time_control,
+                 number_of_turns: int = 0,
+                 turns=None,
+                 actual_turn: int = 0,
+                 time_control: str = "",
+                 players=None,
+                 competing_players=None,
                  is_finish: bool = False):
         """Has a Name, a Place, a Date (Start + End), a description and a time control"""
 
+        if competing_players is None:
+            competing_players = []
+        if players is None:
+            players = []
+        if turns is None:
+            turns = []
         self.tournament_name = tournament_name
         self.tournament_place = tournament_place
         self.start_date = start_date
         self.end_date = end_date
         self.description = description
-        self.number_of_turns = DEFAULT_NUMBER_OF_TURNS
-        self.actual_turn: int = 0
-        self.turns: list[Turn] = []
-        self.players: list[int] = []
-        self.competing_players: list[int] = []
+        self.number_of_turns = number_of_turns
+        self.actual_turn = actual_turn
+        self.turns = turns
+        self.players = players
+        self.competing_players = competing_players
         self.time_control = time_control
         self.is_finish = is_finish
 
