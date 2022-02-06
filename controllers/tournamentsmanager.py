@@ -4,7 +4,7 @@ from controllers.base import Controller
 from models.person import Player
 from models.tournament import Tournament
 from views.player import PlayerView
-from initialisation import DEFAULT_NUMBER_OF_TURNS
+from initialisation import DEFAULT_NUMBER_OF_TURNS, NUMBERS_OF_PLAYERS
 
 
 class TournamentController(Controller):
@@ -67,7 +67,7 @@ class TournamentController(Controller):
 
     def get_players(self):
         participants = []
-        for i in range(8):
+        for i in range(NUMBERS_OF_PLAYERS):
             inscription = True
             while inscription:
                 print(f"Joueur {i + 1}")
@@ -151,11 +151,15 @@ class TournamentController(Controller):
                     tournament_dict = tournaments_list[0]
                     tournament = Tournament(**tournament_dict)
                     print(tournament)
+                    if not tournament.is_finish:
+                        print("TURNS_MANAGER")
                     # Vérifier si le tournois est fini ou non
                     # Si tournois pas encore terminé:
                         # Démarrer tour
                         # -> Faire ToursManager
                     # Sinon indiquer que tournois est terminé
+                    else:
+                        self.view.warning(message="Ce tournoi est terminé et ne peut pas être chargé.")
 
                 if len(tournaments_list) == 0:
                     self.view.show_the_tournament_found(tournament=False)
