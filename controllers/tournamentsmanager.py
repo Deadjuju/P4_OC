@@ -47,12 +47,16 @@ class TournamentController(Controller):
             field=self.view.prompt_for_tournament_place,
             message="Le champ - Place - ne peut pas être vide."
         ).title()
-        start_date = self._ask_and_check_field_date(field=self.view.prompt_for_start_date)
-        end_date = self._ask_and_check_field_date(field=self.view.prompt_for_end_date)
+        start_date = self._ask_and_check_field_date(
+            field=self.view.prompt_for_start_date
+        )
+        end_date = self._ask_and_check_field_date(
+            field=self.view.prompt_for_end_date
+        )
         description = self.view.prompt_for_description()
         time_control = self.ask_and_check_time_control_field()
         tournament = Tournament(tournament_name=tournament_name,
-                                place=tournament_place,
+                                tournament_place=tournament_place,
                                 start_date=start_date,
                                 end_date=end_date,
                                 description=description,
@@ -91,15 +95,40 @@ class TournamentController(Controller):
         print(participants)
         return participants
 
+    def _find_tournaments_list(self) -> list:
+        """Find in database the list of tournaments who have the same characteristics
+
+                Returns:
+                    (list): list of tournaments
+                """
+
+        tournament_name = self._ask_and_check_field(
+            field=self.view.prompt_for_tournament_name,
+            message="Le champ - Place - ne peut pas être vide."
+        ).title()
+        print(f"NAME: {tournament_name}")
+        tournament_place = self._ask_and_check_field(
+            field=self.view.prompt_for_tournament_place,
+            message="Le champ - Place - ne peut pas être vide."
+        ).title()
+        print(f"PLACE: {tournament_place}")
+
+        # list of players who have the same characteristics
+        tournaments_list = Tournament.search_tournament(tournament_name=tournament_name,
+                                                        tournament_place=tournament_place)
+        return tournaments_list
+
     def tournaments_manager(self):
         """execution and selection of the different choices"""
         tournaments_manager_run = True
         while tournaments_manager_run:
             choice = self._check_ask_create_tournament_or_load_tournament()
             if choice == "off":
+                # quit programme
                 self.view.information(message="A BIENTOT!!!")
                 sys.exit()
             if choice == "1":
+                # create a tournament
                 tournament = self._create_tournament()
                 participants = self.get_players()
                 tournament.players = participants
@@ -111,6 +140,16 @@ class TournamentController(Controller):
                         tournament.save()
                 else:
                     self.view.warning(message="Ce tournois existe déjà.")
+
+            if choice == "2":
+                # Load a tournament
+                self.view.information(message="---- CHARGER UN TOURNOIS ----")
+                tournaments_list = self._find_tournaments_list()
+                print(tournaments_list)
+
+            if choice == "return":
+                # back
+                pass
 
 
 if __name__ == '__main__':

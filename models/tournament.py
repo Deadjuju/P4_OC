@@ -11,7 +11,7 @@ class Tournament:
 
     def __init__(self,
                  tournament_name: str,
-                 place: str,
+                 tournament_place: str,
                  start_date,
                  end_date,
                  description: str,
@@ -20,7 +20,7 @@ class Tournament:
         """Has a Name, a Place, a Date (Start + End), a description and a time control"""
 
         self.tournament_name = tournament_name
-        self.place = place
+        self.tournament_place = tournament_place
         self.start_date = start_date
         self.end_date = end_date
         self.description = description
@@ -33,7 +33,7 @@ class Tournament:
         self.is_finish = is_finish
 
     def __str__(self) -> str:
-        return f"🏆 {self.tournament_name} - {self.place}\nDate: {self.date}\n{self.description}"
+        return f"🏆 {self.tournament_name} - {self.tournament_place}\nDate: {self.date}\n{self.description}"
 
     def __repr__(self) -> str:
         return str(self.__str__())
@@ -46,7 +46,7 @@ class Tournament:
                     (dict): instance of tournament
                 """
         return TOURNAMENTS_TABLE.get((where('tournament_name') == self.tournament_name)
-                                     & (where('place') == self.place))
+                                     & (where('place') == self.tournament_place))
 
     @property
     def date(self) -> tuple:
@@ -61,6 +61,24 @@ class Tournament:
         tournament_table = TOURNAMENTS_TABLE
         return tournament_table.insert(self.__dict__)
 
+    @classmethod
+    def search_tournament(cls, tournament_name, tournament_place) -> list:
+        """List of tournaments with same characteristics
+
+                Args:
+                    tournament_name (str): name of tournament
+                    tournament_place (str): place where the tournament takes place
+                Returns:
+                    list_tournaments_dictionary (list): tournaments
+
+                """
+        print(f"Path: {TOURNAMENTS_TABLE}")
+        list_tournaments_dictionary = TOURNAMENTS_TABLE.search(
+            (where('tournament_name') == tournament_name)
+            & (where('tournament_place') == tournament_place)
+        )
+        return list_tournaments_dictionary
+
     def exists(self) -> bool:
         """ Return True if instance exist in database
 
@@ -73,7 +91,7 @@ class Tournament:
 
 if __name__ == "__main__":
     tournament_1 = Tournament(tournament_name="FlammekuEchec",
-                              place="Strasbourg",
+                              tournament_place="Strasbourg",
                               start_date="30/01/2022",
                               end_date="31/01/2022",
                               description="1er tournoi d'échec du fameux AlsaChess Tour.",

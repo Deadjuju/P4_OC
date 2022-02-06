@@ -79,8 +79,10 @@ class Player(Person):
 
                 """
 
-        list_players_dictionary = PLAYERS_TABLE.search((where('first_name') == first_name)
-                                                       & (where('last_name') == last_name))
+        list_players_dictionary = PLAYERS_TABLE.search(
+            (where('first_name') == first_name)
+            & (where('last_name') == last_name)
+        )
         return list_players_dictionary
 
     @classmethod
