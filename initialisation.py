@@ -4,6 +4,7 @@ from tinydb import TinyDB
 from pathlib import Path
 
 DATE_FORMAT = ('%d/%m/%Y', 'jj/mm/aaaa')
+HOURS_FORMAT = "%Hh%M"
 
 DEFAULT_NUMBER_OF_TURNS = 4
 NUMBERS_OF_PLAYERS = 8
