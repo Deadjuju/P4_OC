@@ -57,6 +57,9 @@ class Player(Person):
     def __repr__(self) -> str:
         return f"{super().__str__()} - #{self.ranking} - 🎂 {self.date_of_birth}"
 
+    def __lt__(self, other):
+        return self.ranking < other.ranking
+
     @property
     def db_instance(self):
         """ Return an instance of player from the database, or None
