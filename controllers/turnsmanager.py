@@ -40,8 +40,13 @@ class TurnsManager(Controller):
 
     def turns_run(self):
         pairs = self.pairs_generate.swiss_system()
+        # for pair in pairs:
+        #     print("TYPE")
+        #     id_1 = pair[0].db_instance
+        #     print(id_1)
+
         matchs_list = [
-            Match(player_1=pair[0], player_2=pair[1]) for pair in pairs
+            Match(player_1=pair[0].__str__(), player_2=pair[1].__str__()) for pair in pairs
         ]
 
         turn = Turn(tournament_name=self.tournament_name,
@@ -62,8 +67,12 @@ class TurnsManager(Controller):
         # Type the matchs results
         for match in matchs_list:
             match_results = self.ask_and_check_players_score(match=match)
+            # change score
             match.score_player_1 = match_results[0]
             match.score_player_2 = match_results[1]
+            # save match end get id
+            id_match = match.save()
+            print(f"ID MATCH: {id_match}")
 
         turn.matchs = matchs_list
 

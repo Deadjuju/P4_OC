@@ -14,5 +14,6 @@ DB = TinyDB(Path(__file__).resolve().parent / 'db.json', indent=4)
 PLAYERS_TABLE = DB.table("Players")
 TOURNAMENTS_TABLE = DB.table("Tournaments")
 TURNS_TABLE = DB.table("Turns")
+MATCHS_TABLE = DB.table("Matchs")
 
 

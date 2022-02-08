@@ -152,7 +152,6 @@ class TournamentController(Controller):
                 self.view.information(message="---- CHARGER UN TOURNOIS ----")
                 sleep(0.5)
                 tournaments_list = self._find_tournaments_list()
-                print(tournaments_list)
                 sleep(1)
                 if len(tournaments_list) == 1:
                     self.view.show_the_tournament_found(tournament=True)
@@ -185,11 +184,10 @@ class TournamentController(Controller):
                             turn_number=actual_turn,
                             players_id_list=players_id_list
                         )
+
+                        # collects the turn and the stock in the tournament
                         turn = turn_creating.turns_run()
                         tournament.turns.append(turn)
-                        print("TOURNAMENT")
-                        print(tournament.turns)
-                        print(tournament.__dict__)
 
                         tournament.actual_turn += 1
 
@@ -197,6 +195,14 @@ class TournamentController(Controller):
                             tournament.is_finish = True
 
                         print(tournament.__dict__)
+
+                        new_actual_turn = tournament.actual_turn
+                        new_turns = ["tournament.turns"]
+                        new_is_finish = tournament.is_finish
+                        tournament.update_in_db(new_actual_turn=new_actual_turn,
+                                                new_turns=new_turns,
+                                                new_is_finish=new_is_finish,
+                                                player_id=1)
 
                     # Sinon indiquer que tournois est terminé
                     else:

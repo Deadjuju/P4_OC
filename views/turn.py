@@ -16,7 +16,7 @@ class TurnView(View):
     def end_of_the_matchs(cls):
         print(f"\n"
               f"{'-' * 30} FIN DES MATCHS {'-' * 30}")
-        input("-- RENTRER LES SCORES: ----> \n"
+        print("-- RENTRER LES SCORES: ----> \n"
               "")
 
     @classmethod

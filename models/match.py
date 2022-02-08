@@ -1,4 +1,5 @@
 """Match"""
+from initialisation import MATCHS_TABLE
 
 
 class Match:
@@ -23,6 +24,15 @@ class Match:
     @property
     def match_name(self):
         return [{self.player_1}, {self.score_player_1}], [{self.player_2}, {self.score_player_2}]
+
+    def save(self) -> int:
+        """ Save an instance of a match in the database
+
+                Returns:
+                    (int): id of match in database
+                """
+        matchs_table = MATCHS_TABLE
+        return matchs_table.insert(self.__dict__)
 
 
 

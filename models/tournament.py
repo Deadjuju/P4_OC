@@ -90,6 +90,28 @@ class Tournament:
         )
         return list_tournaments_dictionary
 
+    @classmethod
+    def update_in_db(cls, new_actual_turn: int, new_turns: list, new_is_finish: bool, player_id: int):
+        """update a tournament instance in database
+
+                Args:
+                    new_actual_turn (int): new ranking
+                    new_turns (list): id of player
+                    new_is_finish (bool): new ranking
+                    player_id (int): id of player
+                """
+        player_id_list = [player_id]
+        TOURNAMENTS_TABLE.update({'actual_turn': new_actual_turn}, doc_ids=player_id_list)
+        TOURNAMENTS_TABLE.update({'turns': new_turns}, doc_ids=player_id_list)
+        TOURNAMENTS_TABLE.update({'is_finish': new_is_finish}, doc_ids=player_id_list)
+
+        # TOURNAMENTS_TABLE.update({
+        #     'actual_turn': new_actual_turn,
+        #     'turns': new_turns,
+        #     'new_is_finish': new_is_finish
+        # },
+        #     doc_ids=player_id_list)
+
     def exists(self) -> bool:
         """ Return True if instance exist in database
 
