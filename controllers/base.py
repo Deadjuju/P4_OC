@@ -38,14 +38,14 @@ class Controller:
             except ValueError:
                 self.view.warning(message=f"La date doit être saisie au format {DATE_FORMAT[1]}.")
 
-    def check_yes_or_no(self, message, subject):
+    def check_yes_or_no(self, message, subject, commit_message: tuple):
         print(message)
         print(subject)
         response = self.view.prompt_yes_or_no().lower()
         if response == "y" or response == "yes" or response == "oui" or response == "o":
-            print("--- SAUVEGARDE ---")
+            print(commit_message[0])
             return True
         else:
-            print("--- ABANDONS ---")
+            print(commit_message[1])
             return False
 

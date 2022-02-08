@@ -5,6 +5,7 @@ from controllers.base import Controller
 from models.person import Player
 from models.tournament import Tournament
 from views.player import PlayerView
+from views.turn import TurnView
 from initialisation import DEFAULT_NUMBER_OF_TURNS, NUMBERS_OF_PLAYERS
 from controllers.turnsmanager import TurnsManager
 
@@ -137,8 +138,11 @@ class TournamentController(Controller):
                 tournament.competing_players = participants
                 print(tournament.__dict__)
                 if not tournament.exists():
-                    if self.check_yes_or_no(message="Voulez-vous sauvegarder le tournois: ",
-                                            subject=tournament.__dict__):
+                    if self.check_yes_or_no(
+                            message="Voulez-vous sauvegarder le tournois: ",
+                            subject=tournament.__dict__,
+                            commit_message=("--- SAUVEGARDE ---", "--- ABANDONS ---")
+                    ):
                         tournament.save()
                 else:
                     self.view.warning(message="Ce tournois existe déjà.")
@@ -159,7 +163,7 @@ class TournamentController(Controller):
                     # Vérifier si le tournois est fini ou non
                     # Si tournois pas encore terminé:
                     # Démarrer tour
-                    # -> Faire ToursManager
+                    # -> Lancer ToursManager
                     # --> Créer paire de joueurs
                     # --> Les stocker dans la liste de Matchs []  ----- | > Class Turn
                     # --> Afficher chaque Match  ---------------------- | > Class Turn
@@ -175,12 +179,24 @@ class TournamentController(Controller):
                         actual_turn = tournament.actual_turn
                         tournament_name = tournament.tournament_name
                         players_id_list = tournament.players
-                        turn = TurnsManager(
+                        turn_creating = TurnsManager(
+                            view=TurnView,
                             tournament_name=tournament_name,
                             turn_number=actual_turn,
                             players_id_list=players_id_list
                         )
-                        turn.turns_run()
+                        turn = turn_creating.turns_run()
+                        tournament.turns.append(turn)
+                        print("TOURNAMENT")
+                        print(tournament.turns)
+                        print(tournament.__dict__)
+
+                        tournament.actual_turn += 1
+
+                        if tournament.actual_turn == DEFAULT_NUMBER_OF_TURNS + 1:
+                            tournament.is_finish = True
+
+                        print(tournament.__dict__)
 
                     # Sinon indiquer que tournois est terminé
                     else:

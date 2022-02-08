@@ -21,6 +21,10 @@ class Turn:
         return f"{self.tournament_name} - {self.current_turn_number}\n" \
                f"{self.matchs}"
 
+    def __repr__(self):
+        return f"{self.tournament_name} - {self.current_turn_number}\n" \
+               f"{self.matchs}"
+
     def get_end_date(self):
         self.end_date_and_time = datetime.now().strftime(f"{DATE_FORMAT[0]} {HOURS_FORMAT}")
 
