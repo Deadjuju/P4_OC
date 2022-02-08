@@ -1,3 +1,4 @@
+from time import sleep
 import sys
 
 from controllers.base import Controller
@@ -5,6 +6,7 @@ from models.person import Player
 from models.tournament import Tournament
 from views.player import PlayerView
 from initialisation import DEFAULT_NUMBER_OF_TURNS, NUMBERS_OF_PLAYERS
+from controllers.turnsmanager import TurnsManager
 
 
 class TournamentController(Controller):
@@ -144,19 +146,42 @@ class TournamentController(Controller):
             if choice == "2":
                 # Load a tournament
                 self.view.information(message="---- CHARGER UN TOURNOIS ----")
+                sleep(0.5)
                 tournaments_list = self._find_tournaments_list()
                 print(tournaments_list)
+                sleep(1)
                 if len(tournaments_list) == 1:
                     self.view.show_the_tournament_found(tournament=True)
                     tournament_dict = tournaments_list[0]
                     tournament = Tournament(**tournament_dict)
                     print(tournament)
-                    if not tournament.is_finish:
-                        print("TURNS_MANAGER")
+
                     # Vérifier si le tournois est fini ou non
                     # Si tournois pas encore terminé:
-                        # Démarrer tour
-                        # -> Faire ToursManager
+                    # Démarrer tour
+                    # -> Faire ToursManager
+                    # --> Créer paire de joueurs
+                    # --> Les stocker dans la liste de Matchs []  ----- | > Class Turn
+                    # --> Afficher chaque Match  ---------------------- | > Class Turn
+                    # --> Rentrer les scores  ------------------------- | > Class Turn
+                    # -> Stocker Turn dans la liste des Turns  -------- | > Class Tournaments
+                    # -> Incrémenter d'1 le tour actuel  -------------- | > Class Tournaments
+                    # -> Si tour actuel == NB DE TOUR => C'est fini   - | > Class Tournaments
+                    # => Enregistrer dans la BDD
+
+                    if not tournament.is_finish:
+                        print("TURNS_MANAGER")
+                        sleep(1)
+                        actual_turn = tournament.actual_turn
+                        tournament_name = tournament.tournament_name
+                        players_id_list = tournament.players
+                        turn = TurnsManager(
+                            tournament_name=tournament_name,
+                            turn_number=actual_turn,
+                            players_id_list=players_id_list
+                        )
+                        turn.turns_run()
+
                     # Sinon indiquer que tournois est terminé
                     else:
                         self.view.warning(message="Ce tournoi est terminé et ne peut pas être chargé.")
