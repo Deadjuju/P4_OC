@@ -1,6 +1,7 @@
 from controllers.base import Controller
 from controllers.pairsgeneration import GenerationOfPairs
 from models.match import Match
+from models.person import Player
 from models.turn import Turn
 
 
@@ -26,6 +27,24 @@ class TurnsManager(Controller):
             else:
                 self.view.warning("Ce choix n'est pas autorisé.")
 
+    @classmethod
+    def save_player_score(cls, player, player_score):
+        first_name = player.split(" ")[1]
+        last_name = player.split(" ")[2]
+        players_list = Player.search_player(first_name=first_name,
+                                            last_name=last_name)
+        player = players_list[0]
+        player_id = player.doc_id
+        instance_player = Player(**player)
+        instance_player.tournament_score += player_score
+        print(instance_player.tournament_score)
+        print(first_name, last_name)
+        instance_player.update_attribut(
+            new_attribut_value=instance_player.tournament_score,
+            attribut_name="tournament_score",
+            player_id=player_id
+        )
+
     def ask_and_check_players_score(self, match):
 
         self.view.information(message="Rentrez\n"
@@ -34,16 +53,17 @@ class TurnsManager(Controller):
                                       "1 -> pour une victoire\n"
                                       f"----- {match} -----")
         player1_score = self._checks_results(player=match.player_1)
+        self.save_player_score(player=match.player_1,
+                               player_score=player1_score)
+
         player2_score = self._checks_results(player=match.player_2)
+        self.save_player_score(player=match.player_2,
+                               player_score=player2_score)
 
         return player1_score, player2_score
 
     def turns_run(self):
         pairs = self.pairs_generate.swiss_system()
-        # for pair in pairs:
-        #     print("TYPE")
-        #     id_1 = pair[0].db_instance
-        #     print(id_1)
 
         matchs_list = [
             Match(player_1=pair[0].__str__(), player_2=pair[1].__str__()) for pair in pairs
@@ -52,8 +72,6 @@ class TurnsManager(Controller):
         turn = Turn(tournament_name=self.tournament_name,
                     matchs=matchs_list,
                     current_turn_number=self.turn_number)
-        # print(turn.__dict__)
-        # print(turn)
 
         self.view.show_the_matchs(matchs=turn.matchs)
         while self.check_yes_or_no(
@@ -94,4 +112,3 @@ if __name__ == '__main__':
                                     turn_number=1,
                                     players_id_list=players_id_list)
     turn_in_progress.turns_run()
-

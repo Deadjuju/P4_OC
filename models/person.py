@@ -113,6 +113,19 @@ class Player(Person):
                              doc_ids=player_id_list)
 
     @classmethod
+    def update_attribut(cls, new_attribut_value, attribut_name: str, player_id: int):
+        """update a ranking in database
+
+                Args:
+                    new_attribut_value (): new value
+                    attribut_name (str): attribut's name
+                    player_id (int): id of player
+                """
+        player_id_list = [player_id]
+        PLAYERS_TABLE.update({attribut_name: new_attribut_value},
+                             doc_ids=player_id_list)
+
+    @classmethod
     def delete_a_player(cls, player_id):
         """delete a player from database
 
