@@ -11,8 +11,8 @@ class Person:
     def __init__(self,
                  first_name: str,
                  last_name: str,
-                 gender,
-                 date_of_birth):
+                 gender: str,
+                 date_of_birth: str):
         """Has a first_name, a last_name, a gender and a birthday"""
         self.first_name = first_name
         self.last_name = last_name
@@ -26,7 +26,7 @@ class Person:
         return f"👥 {self.full_name}"
 
     @property
-    def full_name(self):
+    def full_name(self) -> str:
         """Return Full Name"""
         return f"{self.first_name} {self.last_name}"
 
@@ -61,7 +61,7 @@ class Player(Person):
         return self.ranking < other.ranking
 
     @property
-    def db_instance(self):
+    def db_instance(self) -> dict:
         """ Return an instance of player from the database, or None
 
                 Returns:
