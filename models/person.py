@@ -101,6 +101,18 @@ class Player(Person):
                              doc_ids=player_id_list)
 
     @classmethod
+    def update_already_faced(cls, new_already_faced, player_id: int):
+        """update a ranking in database
+
+                Args:
+                    new_already_faced (): new already_faced
+                    player_id (int): id of player
+                """
+        player_id_list = [player_id]
+        PLAYERS_TABLE.update({'already_faced': new_already_faced},
+                             doc_ids=player_id_list)
+
+    @classmethod
     def delete_a_player(cls, player_id):
         """delete a player from database
 

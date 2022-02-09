@@ -64,33 +64,54 @@ class GenerationOfPairs:
 
         print("-" * 50)
 
+        # Split player instances into two lists
         best_players_list = players_instance_list[:half_player_list_length]
         worst_players_list = players_instance_list[half_player_list_length:]
 
+        # Create the pairs
+        # Check if the players have not already faced each other
         pairs_list = []
         for _ in range(half_player_list_length):
             i = 0
             pair_find = False
 
             best1: Player = best_players_list.pop(0)
+            player1_id = Player.search_player(first_name=best1.first_name,
+                                              last_name=best1.last_name)[0].doc_id
             best2 = None
 
             while not pair_find:
 
                 player2 = worst_players_list[i]
+                player2_id = Player.search_player(first_name=player2.first_name,
+                                                  last_name=player2.last_name)[0].doc_id
+                print("PLAYER 2 ID")
+                print(player2_id)
 
-                if player2 not in best1.already_faced:
+                if player2_id not in best1.already_faced:
                     best2 = worst_players_list.pop(0 + i)
+                    print(best2)
+                    print(best2.already_faced)
+                    print(type(best2))
 
-                    best1.already_faced.append(best2)
-                    best2.already_faced.append(best1)
+                    best1_already_faced = best1.already_faced
+                    best2_already_faced = best2.already_faced
+
+                    best1_already_faced.append(player2_id)
+                    best2_already_faced.append(player1_id)
+
+                    # save already_faced in db
+                    best1.update_already_faced(new_already_faced=best1_already_faced, player_id=player1_id)
+                    best2.update_already_faced(new_already_faced=best2_already_faced, player_id=player2_id)
 
                     pair_find = True
+                    i = 0
                 else:
                     i += 1
 
             pair = (best1, best2)
             pairs_list.append(pair)
+
         return pairs_list
 
     def swiss_system(self):
