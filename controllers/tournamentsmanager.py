@@ -82,17 +82,31 @@ class TournamentController(Controller):
                     field=self.player_view.prompt_for_player_last_name,
                     message="Le champ - nom - ne peut pas être vide."
                 ).title()
-                player = Player.search_player(first_name=player_first_name,
-                                              last_name=player_last_name)
+                players_list = Player.search_player(first_name=player_first_name,
+                                                    last_name=player_last_name)
 
                 try:
-                    player_id = player[0].doc_id
+                    player = players_list[0]
                 except IndexError:
                     print("Ce joueur n'est pas enregistré.")
                 else:
+                    player_id = player.doc_id
                     if player_id not in participants:
+                        # initialisation: tournament_score=0 & already_faced=[]
+                        player_instance = Player(**player)
+                        player_instance.update_attribute(
+                            new_attribute_value=0,
+                            attribute_name="tournament_score",
+                            player_id=player_id
+                        )
+                        player_instance.update_attribute(
+                            new_attribute_value=[],
+                            attribute_name="already_faced",
+                            player_id=player_id
+                        )
+
                         participants.append(player_id)
-                        print(player)
+                        print(players_list)
                         i += 1
                         inscription = False
                     else:
@@ -159,19 +173,6 @@ class TournamentController(Controller):
                     tournament = Tournament(**tournament_dict)
                     print(tournament)
 
-                    # Vérifier si le tournois est fini ou non
-                    # Si tournois pas encore terminé:
-                    # Démarrer tour
-                    # -> Lancer ToursManager
-                    # --> Créer paire de joueurs
-                    # --> Les stocker dans la liste de Matchs []  ----- | > Class Turn
-                    # --> Afficher chaque Match  ---------------------- | > Class Turn
-                    # --> Rentrer les scores  ------------------------- | > Class Turn
-                    # -> Stocker Turn dans la liste des Turns  -------- | > Class Tournaments
-                    # -> Incrémenter d'1 le tour actuel  -------------- | > Class Tournaments
-                    # -> Si tour actuel == NB DE TOUR => C'est fini   - | > Class Tournaments
-                    # => Enregistrer dans la BDD
-
                     if not tournament.is_finish:
                         sleep(1)
                         actual_turn = tournament.actual_turn
@@ -209,7 +210,6 @@ class TournamentController(Controller):
                                                 new_is_finish=new_is_finish,
                                                 player_id=1)
 
-                    # Sinon indiquer que tournois est terminé
                     else:
                         self.view.warning(message="Ce tournoi est terminé et ne peut pas être chargé.")
 
