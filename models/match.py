@@ -22,7 +22,12 @@ class Match:
         return f"([{self.player_1}, {self.score_player_1}], [{self.player_2}, {self.score_player_2}])"
 
     @property
-    def match_name(self):
+    def match_name(self) -> tuple:
+        """Returns the name of a match in the format ([player1, score1], [player2, score2])
+            Returns:
+                (tuple): id of turn in database
+                """
+
         return [{self.player_1}, {self.score_player_1}], [{self.player_2}, {self.score_player_2}]
 
     def save(self) -> int:
@@ -33,6 +38,5 @@ class Match:
                 """
         matchs_table = MATCHS_TABLE
         return matchs_table.insert(self.__dict__)
-
 
 

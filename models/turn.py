@@ -7,7 +7,7 @@ from initialisation import DATE_FORMAT, HOURS_FORMAT, TURNS_TABLE
 class Turn:
     """Turn in a tournament"""
 
-    def __init__(self, tournament_name, matchs=None, current_turn_number: int = 0):
+    def __init__(self, tournament_name: str, matchs=None, current_turn_number: int = 0):
         self.tournament_name = tournament_name
         if matchs is None:
             matchs = []
@@ -26,6 +26,7 @@ class Turn:
                f"{self.matchs}"
 
     def get_end_date(self):
+        """Get the date when the round ends """
         self.end_date_and_time = datetime.now().strftime(f"{DATE_FORMAT[0]} {HOURS_FORMAT}")
 
     def save(self) -> int:
