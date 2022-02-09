@@ -3,7 +3,6 @@
 from tinydb import where
 
 from initialisation import DEFAULT_NUMBER_OF_TURNS, TOURNAMENTS_TABLE
-from models.turn import Turn
 
 
 class Tournament:
@@ -12,8 +11,8 @@ class Tournament:
     def __init__(self,
                  tournament_name: str,
                  tournament_place: str,
-                 start_date,
-                 end_date,
+                 start_date: str,
+                 end_date: str,
                  description: str,
                  number_of_turns: int = DEFAULT_NUMBER_OF_TURNS,
                  turns=None,
@@ -104,13 +103,6 @@ class Tournament:
         TOURNAMENTS_TABLE.update({'actual_turn': new_actual_turn}, doc_ids=player_id_list)
         TOURNAMENTS_TABLE.update({'turns': new_turns}, doc_ids=player_id_list)
         TOURNAMENTS_TABLE.update({'is_finish': new_is_finish}, doc_ids=player_id_list)
-
-        # TOURNAMENTS_TABLE.update({
-        #     'actual_turn': new_actual_turn,
-        #     'turns': new_turns,
-        #     'new_is_finish': new_is_finish
-        # },
-        #     doc_ids=player_id_list)
 
     def exists(self) -> bool:
         """ Return True if instance exist in database
