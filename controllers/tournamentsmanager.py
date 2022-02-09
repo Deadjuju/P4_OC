@@ -173,7 +173,6 @@ class TournamentController(Controller):
                     # => Enregistrer dans la BDD
 
                     if not tournament.is_finish:
-                        print("TURNS_MANAGER")
                         sleep(1)
                         actual_turn = tournament.actual_turn
                         tournament_name = tournament.tournament_name
@@ -185,19 +184,25 @@ class TournamentController(Controller):
                             players_id_list=players_id_list
                         )
 
-                        # collects the turn and the stock in the tournament
+                        # collects the turn and stock it in the tournament
                         turn = turn_creating.turns_run()
-                        tournament.turns.append(turn)
+
+                        # save the turn in db
+                        # and stock his ID in the list tournament.turns
+                        id_turn = turn.save()
+                        tournament.turns.append(id_turn)
 
                         tournament.actual_turn += 1
 
                         if tournament.actual_turn == DEFAULT_NUMBER_OF_TURNS + 1:
                             tournament.is_finish = True
 
+                        print("TOURNAMENT")
                         print(tournament.__dict__)
+                        input()
 
                         new_actual_turn = tournament.actual_turn
-                        new_turns = ["tournament.turns"]
+                        new_turns = tournament.turns
                         new_is_finish = tournament.is_finish
                         tournament.update_in_db(new_actual_turn=new_actual_turn,
                                                 new_turns=new_turns,

@@ -65,6 +65,7 @@ class TurnsManager(Controller):
 
         self.view.end_of_the_matchs()
         # Type the matchs results
+        id_matchs_list = []
         for match in matchs_list:
             match_results = self.ask_and_check_players_score(match=match)
             # change score
@@ -72,9 +73,10 @@ class TurnsManager(Controller):
             match.score_player_2 = match_results[1]
             # save match end get id
             id_match = match.save()
+            id_matchs_list.append(id_match)
             print(f"ID MATCH: {id_match}")
 
-        turn.matchs = matchs_list
+        turn.matchs = id_matchs_list
 
         # print(turn.__dict__)
         # for match in turn.matchs:

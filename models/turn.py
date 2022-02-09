@@ -1,7 +1,7 @@
 """Turn"""
 from datetime import datetime
 
-from initialisation import DATE_FORMAT, HOURS_FORMAT
+from initialisation import DATE_FORMAT, HOURS_FORMAT, TURNS_TABLE
 
 
 class Turn:
@@ -27,6 +27,15 @@ class Turn:
 
     def get_end_date(self):
         self.end_date_and_time = datetime.now().strftime(f"{DATE_FORMAT[0]} {HOURS_FORMAT}")
+
+    def save(self) -> int:
+        """ Save an instance of a turn in the database
+
+                Returns:
+                    (int): id of turn in database
+                """
+        turns_table = TURNS_TABLE
+        return turns_table.insert(self.__dict__)
 
 
 if __name__ == '__main__':
