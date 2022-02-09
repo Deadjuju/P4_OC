@@ -89,40 +89,16 @@ class Player(Person):
         return list_players_dictionary
 
     @classmethod
-    def update_a_ranking(cls, new_ranking: int, player_id: int):
-        """update a ranking in database
+    def update_attribute(cls, new_attribute_value, attribute_name: str, player_id: int):
+        """update an attribute in database
 
                 Args:
-                    new_ranking (int): new ranking
+                    new_attribute_value (): new value
+                    attribute_name (str): attribut's name
                     player_id (int): id of player
                 """
         player_id_list = [player_id]
-        PLAYERS_TABLE.update({'ranking': new_ranking},
-                             doc_ids=player_id_list)
-
-    @classmethod
-    def update_already_faced(cls, new_already_faced, player_id: int):
-        """update a ranking in database
-
-                Args:
-                    new_already_faced (): new already_faced
-                    player_id (int): id of player
-                """
-        player_id_list = [player_id]
-        PLAYERS_TABLE.update({'already_faced': new_already_faced},
-                             doc_ids=player_id_list)
-
-    @classmethod
-    def update_attribut(cls, new_attribut_value, attribut_name: str, player_id: int):
-        """update a ranking in database
-
-                Args:
-                    new_attribut_value (): new value
-                    attribut_name (str): attribut's name
-                    player_id (int): id of player
-                """
-        player_id_list = [player_id]
-        PLAYERS_TABLE.update({attribut_name: new_attribut_value},
+        PLAYERS_TABLE.update({attribute_name: new_attribute_value},
                              doc_ids=player_id_list)
 
     @classmethod

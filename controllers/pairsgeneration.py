@@ -101,8 +101,17 @@ class GenerationOfPairs:
                     best2_already_faced.append(player1_id)
 
                     # save already_faced in db
-                    best1.update_already_faced(new_already_faced=best1_already_faced, player_id=player1_id)
-                    best2.update_already_faced(new_already_faced=best2_already_faced, player_id=player2_id)
+                    attribute = "already_faced"
+                    best1.update_attribute(
+                        new_attribute_value=best1_already_faced,
+                        attribute_name=attribute,
+                        player_id=player1_id
+                    )
+                    best2.update_attribute(
+                        new_attribute_value=best2_already_faced,
+                        attribute_name=attribute,
+                        player_id=player2_id
+                    )
 
                     pair_find = True
                     i = 0

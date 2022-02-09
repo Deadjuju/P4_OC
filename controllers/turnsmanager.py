@@ -39,9 +39,9 @@ class TurnsManager(Controller):
         instance_player.tournament_score += player_score
         print(instance_player.tournament_score)
         print(first_name, last_name)
-        instance_player.update_attribut(
-            new_attribut_value=instance_player.tournament_score,
-            attribut_name="tournament_score",
+        instance_player.update_attribute(
+            new_attribute_value=instance_player.tournament_score,
+            attribute_name="tournament_score",
             player_id=player_id
         )
 

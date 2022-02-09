@@ -116,8 +116,13 @@ class PlayerController(Controller):
         choice = self._edit_or_delete_player()
         if choice == "edit":
             new_ranking = self.view.prompt_to_change_score()
-            print(f"New score: {new_ranking}")
-            instance_player.update_a_ranking(new_ranking=new_ranking, player_id=player_id)
+            attribute = "ranking"
+            instance_player.update_attribute(
+                new_attribute_value=new_ranking,
+                attribute_name=attribute,
+                player_id=player_id
+            )
+
             self.view.print_the_edit_delete_choice(choice=choice)
             return
         if choice == "delete":
