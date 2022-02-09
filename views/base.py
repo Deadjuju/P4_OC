@@ -20,4 +20,10 @@ class View:
         """Prompt Yes or No"""
         return input(f"Y/n{View.CURSOR}")
 
+    @classmethod
+    def ask_question(cls, question):
+        """Ask a question to user"""
+        return input(question)
+
+
 

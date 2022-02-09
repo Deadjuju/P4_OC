@@ -31,16 +31,24 @@ class TournamentController(Controller):
                 self.view.warning(message="Merci de renseigner 1, 2 ou 3.")
 
     def ask_and_check_time_control_field(self):
-        while True:
-            time_control_choice = self.view.prompt_for_time_control()
-            if time_control_choice == "1":
-                return "Bullet"
-            elif time_control_choice == "2":
-                return "Blitz"
-            elif time_control_choice == "3":
-                return "Coup rapide"
-            else:
-                self.view.warning(message="Merci de renseigner 1, 2 ou 3.")
+        question = f"|| {'_' * 50}\n" \
+                   f"|| Quel le mode de control du temps?\n" \
+                   f"|| Tapez :\n" \
+                   f"|| 1 --> Bullet\n" \
+                   f"|| 2 --> Blitz\n" \
+                   f"|| 3 --> Coup rapide\n" \
+                   f"|| {'_' * 50}" \
+                   f"{self.view.CURSOR}"
+        message = "Merci de renseigner 1, 2 ou 3."
+        responses = {
+            "1": "Bullet",
+            "Bullet": "Bullet",
+            "2": "Blitz",
+            "Blitz": "Blitz",
+            "3": "Coup rapide",
+            "rapide": "rapide"
+        }
+        return self.control_list_of_user_choices(responses_list=responses, question=question, message=message)
 
     def _create_tournament(self) -> Tournament:
         tournament_name = self._ask_and_check_field(

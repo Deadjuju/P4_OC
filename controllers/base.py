@@ -49,3 +49,13 @@ class Controller:
             print(commit_message[1])
             return False
 
+    def control_list_of_user_choices(self, responses_list: dict, question, message: str):
+        while True:
+            choice = self.view.ask_question(question=question)
+            if responses_list.get(choice) is not None:
+                return responses_list.get(choice)
+            else:
+                self.view.warning(message=message)
+
+
+
