@@ -19,12 +19,9 @@ class Tournament:
                  actual_turn: int = 1,
                  time_control: str = "",
                  players=None,
-                 competing_players=None,
                  is_finish: bool = False):
         """Has a Name, a Place, a Date (Start + End), a description and a time control"""
 
-        if competing_players is None:
-            competing_players = []
         if players is None:
             players = []
         if turns is None:
@@ -38,7 +35,6 @@ class Tournament:
         self.actual_turn = actual_turn
         self.turns = turns
         self.players = players
-        self.competing_players = competing_players
         self.time_control = time_control
         self.is_finish = is_finish
 
@@ -49,7 +45,7 @@ class Tournament:
         return str(self.__str__())
 
     @property
-    def db_instance(self):
+    def db_instance(self) -> dict:
         """ Return an instance of tournament from the database, or None
 
                 Returns:
@@ -82,7 +78,6 @@ class Tournament:
                     list_tournaments_dictionary (list): tournaments
 
                 """
-        print(f"Path: {TOURNAMENTS_TABLE}")
         list_tournaments_dictionary = TOURNAMENTS_TABLE.search(
             (where('tournament_name') == tournament_name)
             & (where('tournament_place') == tournament_place)
@@ -100,9 +95,12 @@ class Tournament:
                     player_id (int): id of player
                 """
         player_id_list = [player_id]
-        TOURNAMENTS_TABLE.update({'actual_turn': new_actual_turn}, doc_ids=player_id_list)
-        TOURNAMENTS_TABLE.update({'turns': new_turns}, doc_ids=player_id_list)
-        TOURNAMENTS_TABLE.update({'is_finish': new_is_finish}, doc_ids=player_id_list)
+        TOURNAMENTS_TABLE.update({'actual_turn': new_actual_turn},
+                                 doc_ids=player_id_list)
+        TOURNAMENTS_TABLE.update({'turns': new_turns},
+                                 doc_ids=player_id_list)
+        TOURNAMENTS_TABLE.update({'is_finish': new_is_finish},
+                                 doc_ids=player_id_list)
 
     def exists(self) -> bool:
         """ Return True if instance exist in database

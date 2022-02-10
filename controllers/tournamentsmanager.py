@@ -4,6 +4,7 @@ import sys
 from controllers.base import Controller
 from models.person import Player
 from models.tournament import Tournament
+from models.turn import Turn
 from views.player import PlayerView
 from views.turn import TurnView
 from initialisation import DEFAULT_NUMBER_OF_TURNS, NUMBERS_OF_PLAYERS
@@ -16,7 +17,13 @@ class TournamentController(Controller):
         super().__init__(view)
         self.player_view = player_view
 
-    def _check_ask_create_tournament_or_load_tournament(self):
+    def _check_ask_create_tournament_or_load_tournament(self) -> str:
+        """ask to user to make a choice about tournaments
+
+                Returns:
+                    (str): user choice
+                """
+
         while True:
             choice = self.view.prompt_to_create_tournament_or_load_it()
             if choice == "1":
@@ -30,7 +37,13 @@ class TournamentController(Controller):
             else:
                 self.view.warning(message="Merci de renseigner 1, 2 ou 3.")
 
-    def ask_and_check_time_control_field(self):
+    def ask_and_check_time_control_field(self) -> str:
+        """Prompt to choose a time control mode
+
+                Returns:
+                    (str): time control mode
+                """
+
         question = f"|| {'_' * 50}\n" \
                    f"|| Quel le mode de control du temps?\n" \
                    f"|| Tapez :\n" \
@@ -40,17 +53,25 @@ class TournamentController(Controller):
                    f"|| {'_' * 50}" \
                    f"{self.view.CURSOR}"
         message = "Merci de renseigner 1, 2 ou 3."
-        responses = {
-            "1": "Bullet",
-            "Bullet": "Bullet",
-            "2": "Blitz",
-            "Blitz": "Blitz",
-            "3": "Coup rapide",
-            "rapide": "rapide"
-        }
-        return self.control_list_of_user_choices(responses_list=responses, question=question, message=message)
+        responses = {"1": "Bullet",
+                     "Bullet": "Bullet",
+                     "bullet": "Bullet",
+                     "2": "Blitz",
+                     "Blitz": "Blitz",
+                     "blitz": "Blitz",
+                     "3": "Coup rapide",
+                     "Rapide": "Coup rapide",
+                     "rapide": "rapide"}
+        return self.control_list_of_user_choices(responses_list=responses,
+                                                 question=question,
+                                                 message=message)
 
     def _create_tournament(self) -> Tournament:
+        """
+                Returns:
+                    tournament (Tournament): instance of a tournament
+                """
+
         tournament_name = self._ask_and_check_field(
             field=self.view.prompt_for_tournament_name,
             message="Le champ - Place - ne peut pas être vide."
@@ -67,6 +88,7 @@ class TournamentController(Controller):
         )
         description = self.view.prompt_for_description()
         time_control = self.ask_and_check_time_control_field()
+
         tournament = Tournament(tournament_name=tournament_name,
                                 tournament_place=tournament_place,
                                 start_date=start_date,
@@ -76,12 +98,35 @@ class TournamentController(Controller):
                                 time_control=time_control)
         return tournament
 
-    def get_players(self):
+    def _save_tournament(self, tournament: Tournament):
+        """Check if the tournament does not exist and save it
+            Args:
+                tournament (Tournament): tournament's instance
+                """
+
+        if not tournament.exists():
+            if self.check_yes_or_no(
+                    message="Voulez-vous sauvegarder le tournois: ",
+                    subject=tournament.__dict__,
+                    commit_message=("--- SAUVEGARDE ---", "--- ABANDONS ---")
+            ):
+                tournament.save()
+        else:
+            self.view.warning(message="Ce tournois existe déjà.")
+
+    def get_players(self) -> list:
+        """Generates list of players
+
+                Returns:
+                    participants (list): list of participants
+                """
+
         participants = []
         for i in range(NUMBERS_OF_PLAYERS):
             inscription = True
             while inscription:
-                print(f"Joueur {i + 1}")
+                # Check if the player is in the database
+                self.view.information(message=f"Joueur {i + 1}")
                 player_first_name = self._ask_and_check_field(
                     field=self.player_view.prompt_for_player_first_name,
                     message="Le champ - prénom - ne peut pas être vide."
@@ -96,7 +141,7 @@ class TournamentController(Controller):
                 try:
                     player = players_list[0]
                 except IndexError:
-                    print("Ce joueur n'est pas enregistré.")
+                    self.view.warning(message="Ce joueur n'est pas enregistré.")
                 else:
                     player_id = player.doc_id
                     if player_id not in participants:
@@ -118,8 +163,8 @@ class TournamentController(Controller):
                         i += 1
                         inscription = False
                     else:
-                        print("Ce joueur est déjà inscrit au tournois.")
-        print(participants)
+                        self.view.warning(message="Ce joueur est déjà inscrit au tournois.")
+        self.view.information(message=participants)
         return participants
 
     def _find_tournaments_list(self) -> list:
@@ -143,6 +188,43 @@ class TournamentController(Controller):
                                                         tournament_place=tournament_place)
         return tournaments_list
 
+    @classmethod
+    def creating_and_running_the_turn(cls, tournament) -> Turn:
+        """Creation and course of a turn
+            Args:
+                tournament (Tournament): tournament's instance
+            Returns:
+                (Turn): current turn's instance
+                """
+
+        actual_turn = tournament.actual_turn
+        tournament_name = tournament.tournament_name
+        players_id_list = tournament.players
+        turn_creating = TurnsManager(
+            view=TurnView,
+            tournament_name=tournament_name,
+            turn_number=actual_turn,
+            players_id_list=players_id_list
+        )
+
+        turn = turn_creating.turns_run()
+        return turn
+
+    @classmethod
+    def update_tournament(cls, tournament):
+        """Save news values attributes for a tournament
+            Args:
+                tournament (Tournament): tournament's instance
+                """
+
+        new_actual_turn = tournament.actual_turn
+        new_turns = tournament.turns
+        new_is_finish = tournament.is_finish
+        tournament.update_in_db(new_actual_turn=new_actual_turn,
+                                new_turns=new_turns,
+                                new_is_finish=new_is_finish,
+                                player_id=1)
+
     def tournaments_manager(self):
         """execution and selection of the different choices"""
         tournaments_manager_run = True
@@ -157,44 +239,27 @@ class TournamentController(Controller):
                 tournament = self._create_tournament()
                 participants = self.get_players()
                 tournament.players = participants
-                tournament.competing_players = participants
-                print(tournament.__dict__)
-                if not tournament.exists():
-                    if self.check_yes_or_no(
-                            message="Voulez-vous sauvegarder le tournois: ",
-                            subject=tournament.__dict__,
-                            commit_message=("--- SAUVEGARDE ---", "--- ABANDONS ---")
-                    ):
-                        tournament.save()
-                else:
-                    self.view.warning(message="Ce tournois existe déjà.")
+
+                self._save_tournament(tournament=tournament)
 
             if choice == "2":
                 # Load a tournament
                 self.view.information(message="---- CHARGER UN TOURNOIS ----")
                 sleep(0.5)
                 tournaments_list = self._find_tournaments_list()
-                sleep(1)
+                sleep(0.5)
+
                 if len(tournaments_list) == 1:
-                    self.view.show_the_tournament_found(tournament=True)
                     tournament_dict = tournaments_list[0]
                     tournament = Tournament(**tournament_dict)
-                    print(tournament)
+                    self.view.show_the_tournament_found(tournament=True)
+                    self.view.information(message=tournament)
 
                     if not tournament.is_finish:
                         sleep(1)
-                        actual_turn = tournament.actual_turn
-                        tournament_name = tournament.tournament_name
-                        players_id_list = tournament.players
-                        turn_creating = TurnsManager(
-                            view=TurnView,
-                            tournament_name=tournament_name,
-                            turn_number=actual_turn,
-                            players_id_list=players_id_list
-                        )
 
                         # collects the turn and stock it in the tournament
-                        turn = turn_creating.turns_run()
+                        turn = self.creating_and_running_the_turn(tournament=tournament)
 
                         # save the turn in db
                         # and stock his ID in the list tournament.turns
@@ -206,17 +271,10 @@ class TournamentController(Controller):
                         if tournament.actual_turn == DEFAULT_NUMBER_OF_TURNS + 1:
                             tournament.is_finish = True
 
-                        print("TOURNAMENT")
-                        print(tournament.__dict__)
-                        input()
+                        self.view.information(message="TOURNAMENT")
+                        self.view.information(message=tournament.__dict__)
 
-                        new_actual_turn = tournament.actual_turn
-                        new_turns = tournament.turns
-                        new_is_finish = tournament.is_finish
-                        tournament.update_in_db(new_actual_turn=new_actual_turn,
-                                                new_turns=new_turns,
-                                                new_is_finish=new_is_finish,
-                                                player_id=1)
+                        self.update_tournament(tournament)
 
                     else:
                         self.view.warning(message="Ce tournoi est terminé et ne peut pas être chargé.")
@@ -225,8 +283,7 @@ class TournamentController(Controller):
                     self.view.show_the_tournament_found(tournament=False)
 
             if choice == "return":
-                # back
-                pass
+                tournaments_manager_run = False
 
 
 if __name__ == '__main__':
