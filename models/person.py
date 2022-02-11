@@ -41,7 +41,8 @@ class Player(Person):
                  date_of_birth,
                  ranking: int = 0,
                  tournament_score: float = 0,
-                 already_faced=None):
+                 already_faced=None,
+                 alphabetical = False):
         """Has a first_name, a last_name, a gender and a birthday
         Has a ranking, a tournament score and a list Already_faced"""
         super().__init__(first_name, last_name, gender, date_of_birth)
@@ -50,6 +51,7 @@ class Player(Person):
         self.ranking = ranking
         self.tournament_score = tournament_score
         self.already_faced = already_faced
+        self.alphabetical = alphabetical
 
     def __str__(self) -> str:
         return f"{super().__str__()} #{self.ranking}"
@@ -58,6 +60,8 @@ class Player(Person):
         return f"{super().__str__()} - #{self.ranking} - 🎂 {self.date_of_birth}"
 
     def __lt__(self, other):
+        if self.alphabetical:
+            return self.first_name < other.first_name
         return self.ranking < other.ranking
 
     @property
