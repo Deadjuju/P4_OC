@@ -7,15 +7,15 @@ class GenerationOfPairs:
     def __init__(self, players_id_list):
         self.players_id_list = players_id_list
 
-    def get_instances_list(self) -> list:
-        players_unsorted_list = []
-        # get all player's instance but unsorted
-        for player_id in self.players_id_list:
-            player_dict: dict = PLAYERS_TABLE.get(doc_id=player_id)
-            players_instance = Player(**player_dict)
-            players_unsorted_list.append(players_instance)
-        return players_unsorted_list
-
+    # def get_instances_list(self) -> list:
+    #     players_unsorted_list = []
+    #     # get all player's instance but unsorted
+    #     for player_id in self.players_id_list:
+    #         player_dict: dict = PLAYERS_TABLE.get(doc_id=player_id)
+    #         players_instance = Player(**player_dict)
+    #         players_unsorted_list.append(players_instance)
+    #     return players_unsorted_list
+    #
     @classmethod
     def sort_the_list(cls, players_unsorted_list):
 
@@ -124,7 +124,10 @@ class GenerationOfPairs:
         return pairs_list
 
     def swiss_system(self):
-        players_unsorted_list = self.get_instances_list()
+        # players_unsorted_list = self.get_instances_list()
+        players_unsorted_list = Player.get_players_instances_list(
+            players_id_list=self.players_id_list
+        )
         players_instance_list_sorted = self.sort_the_list(
             players_unsorted_list=players_unsorted_list
         )

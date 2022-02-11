@@ -115,6 +115,20 @@ class Player(Person):
         player_id_list = [player_id]
         PLAYERS_TABLE.remove(doc_ids=player_id_list)
 
+    @classmethod
+    def make_instances_list(cls, dict_list):
+        return [Player(**player_dict) for player_dict in dict_list]
+
+    @classmethod
+    def get_players_instances_list(cls, players_id_list) -> list:
+        players_unsorted_list = []
+        # get all player's instance but unsorted
+        for player_id in players_id_list:
+            player_dict: dict = PLAYERS_TABLE.get(doc_id=player_id)
+            players_instance = Player(**player_dict)
+            players_unsorted_list.append(players_instance)
+        return players_unsorted_list
+
     def save(self) -> int:
         """ Save an instance of a player in the database
 
