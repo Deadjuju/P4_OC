@@ -11,11 +11,39 @@ from initialisation import DEFAULT_NUMBER_OF_TURNS, NUMBERS_OF_PLAYERS
 from controllers.turnsmanager import TurnsManager
 
 
+class FindTournament(Controller):
+
+    def __init__(self, view):
+        super().__init__(view)
+
+    def find_tournaments_list(self) -> list:
+        """Find in database the list of tournaments who have the same characteristics
+
+                Returns:
+                    (list): list of tournaments
+                """
+
+        tournament_name = self._ask_and_check_field(
+            field=self.view.prompt_for_tournament_name,
+            message="Le champ - Place - ne peut pas être vide."
+        ).title()
+        tournament_place = self._ask_and_check_field(
+            field=self.view.prompt_for_tournament_place,
+            message="Le champ - Place - ne peut pas être vide."
+        ).title()
+
+        # list of players who have the same characteristics
+        tournaments_list = Tournament.search_tournament(tournament_name=tournament_name,
+                                                        tournament_place=tournament_place)
+        return tournaments_list
+
+
 class TournamentController(Controller):
 
-    def __init__(self, view, player_view):
+    def __init__(self, view, player_view, find_tournament):
         super().__init__(view)
         self.player_view = player_view
+        self.find_tournament = find_tournament
 
     def _check_ask_create_tournament_or_load_tournament(self) -> str:
         """ask to user to make a choice about tournaments
@@ -167,27 +195,6 @@ class TournamentController(Controller):
         self.view.information(message=participants)
         return participants
 
-    def _find_tournaments_list(self) -> list:
-        """Find in database the list of tournaments who have the same characteristics
-
-                Returns:
-                    (list): list of tournaments
-                """
-
-        tournament_name = self._ask_and_check_field(
-            field=self.view.prompt_for_tournament_name,
-            message="Le champ - Place - ne peut pas être vide."
-        ).title()
-        tournament_place = self._ask_and_check_field(
-            field=self.view.prompt_for_tournament_place,
-            message="Le champ - Place - ne peut pas être vide."
-        ).title()
-
-        # list of players who have the same characteristics
-        tournaments_list = Tournament.search_tournament(tournament_name=tournament_name,
-                                                        tournament_place=tournament_place)
-        return tournaments_list
-
     @classmethod
     def creating_and_running_the_turn(cls, tournament) -> Turn:
         """Creation and course of a turn
@@ -246,7 +253,7 @@ class TournamentController(Controller):
                 # Load a tournament
                 self.view.information(message="---- CHARGER UN TOURNOIS ----")
                 sleep(0.5)
-                tournaments_list = self._find_tournaments_list()
+                tournaments_list = self.find_tournament.find_tournaments_list()
                 sleep(0.5)
 
                 if len(tournaments_list) == 1:
@@ -291,7 +298,10 @@ if __name__ == '__main__':
 
     tournament_manager = TournamentView()
     player_view = PlayerView()
-    tournament_control = TournamentController(view=tournament_manager, player_view=player_view)
+    tournament_found = FindTournament(view=tournament_manager)
+    tournament_control = TournamentController(view=tournament_manager,
+                                              player_view=player_view,
+                                              find_tournament=tournament_found)
     tournament_control.tournaments_manager()
     # tournament = tournament_control._create_tournament()
     # print(tournament.__dict__)
