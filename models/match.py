@@ -30,6 +30,17 @@ class Match:
 
         return [{self.player_1}, {self.score_player_1}], [{self.player_2}, {self.score_player_2}]
 
+    @classmethod
+    def get_matchs_instances_list(cls, matchs_id_list) -> list:
+        instances_matchs_list = []
+        # get all turn's instance
+        for match_id in matchs_id_list:
+            match_dict: dict = MATCHS_TABLE.get(doc_id=match_id)
+            matchs_instance = Match(**match_dict)
+            instances_matchs_list.append(matchs_instance)
+        return instances_matchs_list
+
+
     def save(self) -> int:
         """ Save an instance of a match in the database
 

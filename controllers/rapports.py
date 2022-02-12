@@ -1,7 +1,8 @@
 from pathlib import Path
 
 from controllers.tournamentsmanager import TournamentController, FindTournament
-from initialisation import PLAYERS_TABLE, TOURNAMENTS_TABLE, TURNS_TABLE
+from initialisation import PLAYERS_TABLE, TOURNAMENTS_TABLE, TURNS_TABLE, MATCHS_TABLE
+from models.match import Match
 from models.person import Player
 from models.tournament import Tournament
 from models.turn import Turn
@@ -75,6 +76,20 @@ class TurnsRapports(Rapports):
         self.display_report(title=self.title_report, elements_list=turns_list)
         if self.export:
             self.export_in_txt(list_to_export=turns_list,
+                               doc_name=self.doc_name,
+                               title=self.title_report)
+
+
+class MatchsRapports(Rapports):
+    def __init__(self, table):
+        super().__init__(table)
+        self.title_report = "LISTE DES MATCHS:"
+        self.doc_name = "matchs.txt"
+
+    def matchs_display(self, matchs_list):
+        self.display_report(title=self.title_report, elements_list=matchs_list)
+        if self.export:
+            self.export_in_txt(list_to_export=matchs_list,
                                doc_name=self.doc_name,
                                title=self.title_report)
 
@@ -216,10 +231,11 @@ class RapportsController:
                     if sorted_rapport_choice == "matchs":
                         matchs_id_list = []
                         for turn_instance in instances_turns_list:
-                            print(turn_instance)
-                            print(turn_instance.matchs)
                             matchs_id_list += turn_instance.matchs
-                        print(matchs_id_list)
+                        # print(matchs_id_list)
+                        instances_matchs_list = Match.get_matchs_instances_list(matchs_id_list=matchs_id_list)
+                        rapport = MatchsRapports(table=MATCHS_TABLE)
+                        rapport.matchs_display(matchs_list=instances_matchs_list)
 
             if len(tournaments_list) == 0:
                 self.tournament_view.show_the_tournament_found(tournament=False)
