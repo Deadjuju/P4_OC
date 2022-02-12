@@ -18,11 +18,11 @@ class Turn:
         self.end_date_and_time = None
 
     def __str__(self):
-        return f"{self.tournament_name} - {self.current_turn_number}\n" \
+        return f"{self.tournament_name} - {self.tour_name}\n" \
                f"{self.matchs}"
 
     def __repr__(self):
-        return f"{self.tournament_name} - {self.current_turn_number}\n" \
+        return f"{self.tournament_name} - {self.tour_name}\n" \
                f"{self.matchs}"
 
     def get_end_date(self):

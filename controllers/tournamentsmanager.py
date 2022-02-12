@@ -218,10 +218,11 @@ class TournamentController(Controller):
         return turn
 
     @classmethod
-    def update_tournament(cls, tournament):
+    def update_tournament(cls, tournament, tournament_id):
         """Save news values attributes for a tournament
             Args:
                 tournament (Tournament): tournament's instance
+                tournament_id (int): id of tournament to update
                 """
 
         new_actual_turn = tournament.actual_turn
@@ -230,7 +231,7 @@ class TournamentController(Controller):
         tournament.update_in_db(new_actual_turn=new_actual_turn,
                                 new_turns=new_turns,
                                 new_is_finish=new_is_finish,
-                                player_id=1)
+                                tournament_id=tournament_id)
 
     def tournaments_manager(self):
         """execution and selection of the different choices"""
@@ -258,6 +259,7 @@ class TournamentController(Controller):
 
                 if len(tournaments_list) == 1:
                     tournament_dict = tournaments_list[0]
+                    tournament_id = tournament_dict.doc_id
                     tournament = Tournament(**tournament_dict)
                     self.view.show_the_tournament_found(tournament=True)
                     self.view.information(message=tournament)
@@ -281,7 +283,7 @@ class TournamentController(Controller):
                         self.view.information(message="TOURNAMENT")
                         self.view.information(message=tournament.__dict__)
 
-                        self.update_tournament(tournament)
+                        self.update_tournament(tournament, tournament_id=tournament_id)
 
                     else:
                         self.view.warning(message="Ce tournoi est terminé et ne peut pas être chargé.")
