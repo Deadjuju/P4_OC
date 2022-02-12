@@ -272,6 +272,7 @@ class TournamentController(Controller):
 
                         # save the turn in db
                         # and stock his ID in the list tournament.turns
+                        turn.get_end_date()
                         id_turn = turn.save()
                         tournament.turns.append(id_turn)
 
