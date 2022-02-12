@@ -1,9 +1,10 @@
 from pathlib import Path
 
 from controllers.tournamentsmanager import TournamentController, FindTournament
-from initialisation import PLAYERS_TABLE, TOURNAMENTS_TABLE
+from initialisation import PLAYERS_TABLE, TOURNAMENTS_TABLE, TURNS_TABLE
 from models.person import Player
 from models.tournament import Tournament
+from models.turn import Turn
 from views.tournament import TournamentView
 
 
@@ -64,6 +65,27 @@ class PlayersRapports(Rapports):
                                title=self.title_report)
 
 
+class TurnsRapports(Rapports):
+    def __init__(self, table):
+        super().__init__(table)
+        self.title_report = "LISTE DES TOURS:"
+        self.doc_name = "turns.txt"
+
+    @classmethod
+    def generate_turns_list(cls, turns_id_list):
+        return [
+            Tournament(**tournament_dict) for tournament_dict in turns_id_list
+        ]
+
+    def turns_display(self, turns_id_list):
+        turns_list = self.generate_turns_list(turns_id_list=turns_id_list)
+        self.display_report(title=self.title_report, elements_list=turns_list)
+        if self.export:
+            self.export_in_txt(list_to_export=turns_list,
+                               doc_name=self.doc_name,
+                               title=self.title_report)
+
+
 class TournamentsRapports(Rapports):
     def __init__(self, table):
         super().__init__(table)
@@ -96,7 +118,7 @@ class RapportsController:
             choice = input("Choix:\n"
                            "1 - Pour afficher tous les joueurs\n"
                            "2 - Pour afficher les tournois\n"
-                           "3 - Pour choisir in tournois et afficher ses détails\n"
+                           "3 - Pour choisir un tournois et afficher ses détails\n"
                            "--> ")
             if choice == "1":
                 return "all players"
@@ -108,24 +130,45 @@ class RapportsController:
                 print("Choix non autorisé")
 
     @classmethod
-    def ranking_or_alphabetical(cls):
-        choice = input("Choix:\n"
-                       "1 - Pour afficher les joueurs par ordre de classement \n"
-                       "2 - Pour afficher les joueurs par ordre alphabétique\n"
-                       "--> ")
-        if choice == "1":
-            return "ranking"
-        if choice == "2":
-            return "alphabetical"
-        else:
-            print("Choix non autorisé")
+    def choose_ranking_or_alphabetical(cls):
+        while True:
+            choice = input("Choix:\n"
+                           "1 - Pour afficher les joueurs par ordre de classement \n"
+                           "2 - Pour afficher les joueurs par ordre alphabétique\n"
+                           "--> ")
+            if choice == "1":
+                return "ranking"
+            if choice == "2":
+                return "alphabetical"
+            else:
+                print("Choix non autorisé")
+
+    @classmethod
+    def choose_display_option_tournament(cls):
+        while True:
+            choice = input("Choix:\n"
+                           "1 - Pour afficher les joueurs par ordre de classement \n"
+                           "2 - Pour afficher les joueurs par ordre alphabétique\n"
+                           "3 - Pour afficher tous les tours du tournois\n"
+                           "4 - Pour afficher tous les matchs du tournois\n"
+                           "--> ")
+            if choice == "1":
+                return "ranking"
+            if choice == "2":
+                return "alphabetical"
+            if choice == "3":
+                return "turns"
+            if choice == "4":
+                return "matchs"
+            else:
+                print("Choix non autorisé")
 
     def generate_a_rapport(self):
         rapport_choice = self.choose_a_rapport()
 
         # display players
         if rapport_choice == "all players":
-            sorted_rapport = self.ranking_or_alphabetical()
+            sorted_rapport = self.choose_ranking_or_alphabetical()
             if sorted_rapport == "ranking":
                 rapport = PlayersRapports(table=PLAYERS_TABLE)
                 rapport.sort_players_and_display()
@@ -155,7 +198,7 @@ class RapportsController:
                     players_id_list=players_id_list
                 )
 
-                sorted_rapport_choice = self.ranking_or_alphabetical()
+                sorted_rapport_choice = self.choose_display_option_tournament()
                 # Tournament / Player Ranking
                 if sorted_rapport_choice == "ranking":
                     rapport = PlayersRapports(table=PLAYERS_TABLE)
@@ -168,7 +211,12 @@ class RapportsController:
 
                 # Tournament / Player Ranking
                 if sorted_rapport_choice == "turns":
-                    pass
+                    print(tournament)
+                    turns_id_list = tournament.turns
+                    print(turns_id_list)
+                    # rapport = TurnsRapports(table=TURNS_TABLE)
+                    instances_turns_list = Turn.get_turns_instances_list(turns_id_list=turns_id_list)
+                    print(instances_turns_list)
 
                 # Tournament / Player Ranking
                 if sorted_rapport_choice == "matchs":
