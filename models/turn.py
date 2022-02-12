@@ -17,7 +17,6 @@ class Turn:
             matchs = []
         self.matchs = matchs
         self.current_turn_number = current_turn_number
-        # self.tour_name = f"Round {self.current_turn_number}"
         self.start_date_and_time = start_date_and_time
         if start_date_and_time == "":
             self.get_start_date()
@@ -42,7 +41,7 @@ class Turn:
     @classmethod
     def get_turns_instances_list(cls, turns_id_list) -> list:
         instances_turns_list = []
-        # get all turn's instance but unsorted
+        # get all turn's instance
         for turn_id in turns_id_list:
             turn_dict: dict = TURNS_TABLE.get(doc_id=turn_id)
             turns_instance = Turn(**turn_dict)

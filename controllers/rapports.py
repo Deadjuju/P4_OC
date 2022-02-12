@@ -71,14 +71,7 @@ class TurnsRapports(Rapports):
         self.title_report = "LISTE DES TOURS:"
         self.doc_name = "turns.txt"
 
-    @classmethod
-    def generate_turns_list(cls, turns_id_list):
-        return [
-            Tournament(**tournament_dict) for tournament_dict in turns_id_list
-        ]
-
-    def turns_display(self, turns_id_list):
-        turns_list = self.generate_turns_list(turns_id_list=turns_id_list)
+    def turns_display(self, turns_list):
         self.display_report(title=self.title_report, elements_list=turns_list)
         if self.export:
             self.export_in_txt(list_to_export=turns_list,
@@ -209,18 +202,24 @@ class RapportsController:
                     rapport = PlayersRapports(table=PLAYERS_TABLE, alphabetical=True)
                     rapport.sort_players_and_display(list_to_sort=players_unsorted_list)
 
-                # Tournament / Player Ranking
-                if sorted_rapport_choice == "turns":
-                    print(tournament)
+                # Turns & Matchs / Tournament
+                if sorted_rapport_choice == "turns" or sorted_rapport_choice == "matchs":
                     turns_id_list = tournament.turns
-                    print(turns_id_list)
-                    # rapport = TurnsRapports(table=TURNS_TABLE)
                     instances_turns_list = Turn.get_turns_instances_list(turns_id_list=turns_id_list)
-                    print(instances_turns_list)
 
-                # Tournament / Player Ranking
-                if sorted_rapport_choice == "matchs":
-                    pass
+                    # Turns
+                    if sorted_rapport_choice == "turns":
+                        rapport = TurnsRapports(table=TURNS_TABLE)
+                        rapport.turns_display(turns_list=instances_turns_list)
+
+                    # Matchs
+                    if sorted_rapport_choice == "matchs":
+                        matchs_id_list = []
+                        for turn_instance in instances_turns_list:
+                            print(turn_instance)
+                            print(turn_instance.matchs)
+                            matchs_id_list += turn_instance.matchs
+                        print(matchs_id_list)
 
             if len(tournaments_list) == 0:
                 self.tournament_view.show_the_tournament_found(tournament=False)
