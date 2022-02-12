@@ -1,3 +1,4 @@
+import sys
 from pathlib import Path
 
 from controllers.tournamentsmanager import TournamentController, FindTournament
@@ -10,13 +11,10 @@ from views.tournament import TournamentView
 
 
 class Rapports:
-    def __init__(self, table, export: bool = False):
-        self.table = table
+    def __init__(self, export: bool = False, title_report="", doc_name=""):
         self.export = export
-
-    @property
-    def get_table(self):
-        return self.table.all()
+        self.title_report = title_report
+        self.doc_name = doc_name
 
     @classmethod
     def export_in_txt(cls, list_to_export, doc_name, title):
@@ -34,82 +32,10 @@ class Rapports:
             print(element)
             print("-" * 50)
 
-
-class PlayersRapports(Rapports):
-    def __init__(self, table, alphabetical: bool = False):
-        super().__init__(table)
-        self.alphabetical = alphabetical
-
-        self.title_report = "LISTE DES JOUEURS PAR ORDRE DE CLASSEMENT:"
-        self.doc_name = "players_ranking.txt"
-        if self.alphabetical:
-            self.title_report = "LISTE DES JOUEURS PAR ORDRE ALPHABETIQUE:"
-            self.doc_name = "players_alphabetical.txt"
-
-    def generate_sorted_players(self, list_to_sort):
-        players_list = []
-        for player_instance in list_to_sort:
-            if self.alphabetical:
-                player_instance.alphabetical = True
-            players_list.append(player_instance)
-        players_list.sort()
-        return players_list
-
-    def sort_players_and_display(self, list_to_sort=None):
-        if list_to_sort is None:
-            list_to_sort = Player.make_instances_list(dict_list=self.get_table)
-        sorted_players = self.generate_sorted_players(list_to_sort=list_to_sort)
-        self.display_report(title=self.title_report, elements_list=sorted_players)
+    def display_run(self, elements_list):
+        self.display_report(title=self.title_report, elements_list=elements_list)
         if self.export:
-            self.export_in_txt(list_to_export=sorted_players,
-                               doc_name=self.doc_name,
-                               title=self.title_report)
-
-
-class TurnsRapports(Rapports):
-    def __init__(self, table):
-        super().__init__(table)
-        self.title_report = "LISTE DES TOURS:"
-        self.doc_name = "turns.txt"
-
-    def turns_display(self, turns_list):
-        self.display_report(title=self.title_report, elements_list=turns_list)
-        if self.export:
-            self.export_in_txt(list_to_export=turns_list,
-                               doc_name=self.doc_name,
-                               title=self.title_report)
-
-
-class MatchsRapports(Rapports):
-    def __init__(self, table):
-        super().__init__(table)
-        self.title_report = "LISTE DES MATCHS:"
-        self.doc_name = "matchs.txt"
-
-    def matchs_display(self, matchs_list):
-        self.display_report(title=self.title_report, elements_list=matchs_list)
-        if self.export:
-            self.export_in_txt(list_to_export=matchs_list,
-                               doc_name=self.doc_name,
-                               title=self.title_report)
-
-
-class TournamentsRapports(Rapports):
-    def __init__(self, table):
-        super().__init__(table)
-        self.title_report = "LISTE DES TOURNOIS:"
-        self.doc_name = "tournaments.txt"
-
-    def generate_tournaments_list(self):
-        return [
-            Tournament(**tournament_dict) for tournament_dict in self.get_table
-        ]
-
-    def tournaments_display(self):
-        tournaments_list = self.generate_tournaments_list()
-        self.display_report(title=self.title_report, elements_list=tournaments_list)
-        if self.export:
-            self.export_in_txt(list_to_export=tournaments_list,
+            self.export_in_txt(list_to_export=elements_list,
                                doc_name=self.doc_name,
                                title=self.title_report)
 
@@ -127,6 +53,7 @@ class RapportsController:
                            "1 - Pour afficher tous les joueurs\n"
                            "2 - Pour afficher les tournois\n"
                            "3 - Pour choisir un tournois et afficher ses détails\n"
+                           "4 - Retour"
                            "--> ")
             if choice == "1":
                 return "all players"
@@ -134,6 +61,10 @@ class RapportsController:
                 return "all tournaments"
             if choice == "3":
                 return "select tournament"
+            if choice == "4":
+                return "return"
+            if choice == "off":
+                return "off"
             else:
                 print("Choix non autorisé")
 
@@ -172,73 +103,113 @@ class RapportsController:
                 print("Choix non autorisé")
 
     def generate_a_rapport(self):
-        rapport_choice = self.choose_a_rapport()
 
         # display players
-        if rapport_choice == "all players":
-            sorted_rapport = self.choose_ranking_or_alphabetical()
-            if sorted_rapport == "ranking":
-                rapport = PlayersRapports(table=PLAYERS_TABLE)
-                rapport.sort_players_and_display()
-            if sorted_rapport == "alphabetical":
-                rapport = PlayersRapports(table=PLAYERS_TABLE, alphabetical=True)
-                rapport.sort_players_and_display()
+        rapport_run = True
+        while rapport_run:
+            rapport_choice = self.choose_a_rapport()
 
-        # display tournaments
-        if rapport_choice == "all tournaments":
-            rapport = TournamentsRapports(table=TOURNAMENTS_TABLE)
-            rapport.tournaments_display()
+            if rapport_choice == "all players":
+                sorted_rapport = self.choose_ranking_or_alphabetical()
+                players_dict_list = PLAYERS_TABLE.all()
+                players_list = [Player(**dict) for dict in players_dict_list]
+                if sorted_rapport == "ranking":
+                    players_list.sort()
+                    rapport = Rapports(export=True,
+                                       title_report="TOUS LES JOUEURS",
+                                       doc_name="players_ranking.txt")
+                    rapport.display_run(elements_list=players_list)
 
-        # rapport for a tournament
-        if rapport_choice == "select tournament":
-            self.tournament_view.information(message="---- CHARGER UN TOURNOIS ----")
-            tournaments_list = self.find_tournament.find_tournaments_list()
+                if sorted_rapport == "alphabetical":
+                    players_list_alphabet = []
+                    for player_instance in players_list:
+                        player_instance.alphabetical = True
+                        players_list_alphabet.append(player_instance)
 
-            if len(tournaments_list) == 1:
-                tournament_dict = tournaments_list[0]
-                tournament = Tournament(**tournament_dict)
-                self.tournament_view.show_the_tournament_found(tournament=True)
-                self.tournament_view.information(message=tournament)
+                    players_list_alphabet.sort()
+                    rapport = Rapports(export=True,
+                                       title_report="TOUS LES JOUEURS",
+                                       doc_name="players_alphabetical.txt")
+                    rapport.display_run(elements_list=players_list_alphabet)
 
-                players_id_list = tournament.players
+            # display tournaments
+            if rapport_choice == "all tournaments":
+                tournaments_dict_list = TOURNAMENTS_TABLE.all()
+                tournaments_list = [Tournament(**dict) for dict in tournaments_dict_list]
+                rapport = Rapports(export=True,
+                                   title_report="TOUS LES TOURNOIS",
+                                   doc_name="tournaments.txt")
+                rapport.display_run(elements_list=tournaments_list)
 
-                players_unsorted_list = Player.get_players_instances_list(
-                    players_id_list=players_id_list
-                )
+            # rapport for a tournament
+            if rapport_choice == "select tournament":
+                self.tournament_view.information(message="---- CHARGER UN TOURNOIS ----")
+                tournaments_list = self.find_tournament.find_tournaments_list()
 
-                sorted_rapport_choice = self.choose_display_option_tournament()
-                # Tournament / Player Ranking
-                if sorted_rapport_choice == "ranking":
-                    rapport = PlayersRapports(table=PLAYERS_TABLE)
-                    rapport.sort_players_and_display(list_to_sort=players_unsorted_list)
+                if len(tournaments_list) == 1:
+                    tournament_dict = tournaments_list[0]
+                    tournament = Tournament(**tournament_dict)
+                    self.tournament_view.show_the_tournament_found(tournament=True)
+                    self.tournament_view.information(message=tournament)
 
-                # Tournament / Player alphanbetical
-                if sorted_rapport_choice == "alphabetical":
-                    rapport = PlayersRapports(table=PLAYERS_TABLE, alphabetical=True)
-                    rapport.sort_players_and_display(list_to_sort=players_unsorted_list)
+                    players_id_list = tournament.players
 
-                # Turns & Matchs / Tournament
-                if sorted_rapport_choice == "turns" or sorted_rapport_choice == "matchs":
-                    turns_id_list = tournament.turns
-                    instances_turns_list = Turn.get_turns_instances_list(turns_id_list=turns_id_list)
+                    players_unsorted_list = Player.get_players_instances_list(
+                        players_id_list=players_id_list
+                    )
 
-                    # Turns
-                    if sorted_rapport_choice == "turns":
-                        rapport = TurnsRapports(table=TURNS_TABLE)
-                        rapport.turns_display(turns_list=instances_turns_list)
+                    sorted_rapport_choice = self.choose_display_option_tournament()
+                    # Tournament / Player Ranking
+                    if sorted_rapport_choice == "ranking":
+                        players_unsorted_list.sort()
+                        rapport = Rapports(export=True,
+                                           title_report="LISTE DES JOUEURS:",
+                                           doc_name=f"{tournament.tournament_name}_ranking_players.txt")
+                        rapport.display_run(elements_list=players_unsorted_list)
 
-                    # Matchs
-                    if sorted_rapport_choice == "matchs":
-                        matchs_id_list = []
-                        for turn_instance in instances_turns_list:
-                            matchs_id_list += turn_instance.matchs
-                        # print(matchs_id_list)
-                        instances_matchs_list = Match.get_matchs_instances_list(matchs_id_list=matchs_id_list)
-                        rapport = MatchsRapports(table=MATCHS_TABLE)
-                        rapport.matchs_display(matchs_list=instances_matchs_list)
+                    # Tournament / Player alphabetical
+                    if sorted_rapport_choice == "alphabetical":
+                        players_list = []
+                        for player_instance in players_unsorted_list:
+                            player_instance.alphabetical = True
+                            players_list.append(player_instance)
+                        players_list.sort()
+                        rapport = Rapports(export=True,
+                                           title_report="LISTE DES JOUEURS:",
+                                           doc_name=f"{tournament.tournament_name}_alphabetical_players.txt")
+                        rapport.display_run(elements_list=players_list)
 
-            if len(tournaments_list) == 0:
-                self.tournament_view.show_the_tournament_found(tournament=False)
+                    # Turns & Matchs / Tournament
+                    if sorted_rapport_choice == "turns" or sorted_rapport_choice == "matchs":
+                        turns_id_list = tournament.turns
+                        instances_turns_list = Turn.get_turns_instances_list(turns_id_list=turns_id_list)
+
+                        # Turns
+                        if sorted_rapport_choice == "turns":
+                            rapport = Rapports(export=False,
+                                               title_report="LISTE DES TOURS:",
+                                               doc_name=f"{tournament.tournament_name}_turns.txt")
+                            rapport.display_run(elements_list=instances_turns_list)
+
+                        # Matchs
+                        if sorted_rapport_choice == "matchs":
+                            matchs_id_list = []
+                            for turn_instance in instances_turns_list:
+                                matchs_id_list += turn_instance.matchs
+                            instances_matchs_list = Match.get_matchs_instances_list(matchs_id_list=matchs_id_list)
+                            rapport = Rapports(export=False,
+                                               title_report="LISTE DES MATCHS:",
+                                               doc_name=f"{tournament.tournament_name}_matchs.txt")
+                            rapport.display_run(elements_list=instances_matchs_list)
+
+                if len(tournaments_list) == 0:
+                    self.tournament_view.show_the_tournament_found(tournament=False)
+
+            if rapport_choice == "return":
+                rapport_run = False
+
+            if rapport_choice == "off":
+                sys.exit()
 
 
 if __name__ == '__main__':
