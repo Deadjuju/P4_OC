@@ -84,24 +84,6 @@ class Tournament:
         return list_tournaments_dictionary
 
     @classmethod
-    def update_in_db(cls, new_actual_turn: int, new_turns: list, new_is_finish: bool, tournament_id: int):
-        """update a tournament instance in database
-
-                Args:
-                    new_actual_turn (int): new ranking
-                    new_turns (list): id of player
-                    new_is_finish (bool): new ranking
-                    tournament_id (int): id of tournament
-                """
-        ids_list = [tournament_id]
-        TOURNAMENTS_TABLE.update({'actual_turn': new_actual_turn},
-                                 doc_ids=ids_list)
-        TOURNAMENTS_TABLE.update({'turns': new_turns},
-                                 doc_ids=ids_list)
-        TOURNAMENTS_TABLE.update({'is_finish': new_is_finish},
-                                 doc_ids=ids_list)
-
-    @classmethod
     def update_tournament_attribute(cls,
                                     new_attribute_value,
                                     attribute_name: str,

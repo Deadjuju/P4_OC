@@ -79,6 +79,4 @@ class Turn:
 if __name__ == '__main__':
     turn1 = Turn(tournament_name="Test", matchs=[], current_turn_number=1)
 
-        print(turn1.__dict__)
-    turn1.get_end_date()
     print(turn1.__dict__)
