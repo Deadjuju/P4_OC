@@ -228,10 +228,15 @@ class TournamentController(Controller):
         new_actual_turn = tournament.actual_turn
         new_turns = tournament.turns
         new_is_finish = tournament.is_finish
-        tournament.update_in_db(new_actual_turn=new_actual_turn,
-                                new_turns=new_turns,
-                                new_is_finish=new_is_finish,
-                                tournament_id=tournament_id)
+        tournament.update_tournament_attribute(new_attribute_value=new_actual_turn,
+                                               attribute_name="actual_turn",
+                                               tournament_id=tournament_id)
+        tournament.update_tournament_attribute(new_attribute_value=new_turns,
+                                               attribute_name="turns",
+                                               tournament_id=tournament_id)
+        tournament.update_tournament_attribute(new_attribute_value=new_is_finish,
+                                               attribute_name="is_finish",
+                                               tournament_id=tournament_id)
 
     def tournaments_manager(self):
         """execution and selection of the different choices"""

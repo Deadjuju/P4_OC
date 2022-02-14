@@ -1,4 +1,4 @@
-"""Tournament"""
+""" Model Tournament"""
 
 from tinydb import where
 
@@ -20,7 +20,6 @@ class Tournament:
                  time_control: str = "",
                  players=None,
                  is_finish: bool = False):
-        """Has a Name, a Place, a Date (Start + End), a description and a time control"""
 
         if players is None:
             players = []
@@ -42,7 +41,7 @@ class Tournament:
         return f"🏆 {self.tournament_name} - {self.tournament_place}\nDate: {self.date}\n{self.description}"
 
     def __repr__(self) -> str:
-        return str(self.__str__())
+        return f"🏆 {self.tournament_name} - {self.tournament_place}\nDate: {self.date}\n{self.description}"
 
     @property
     def db_instance(self) -> dict:
@@ -100,6 +99,22 @@ class Tournament:
         TOURNAMENTS_TABLE.update({'turns': new_turns},
                                  doc_ids=ids_list)
         TOURNAMENTS_TABLE.update({'is_finish': new_is_finish},
+                                 doc_ids=ids_list)
+
+    @classmethod
+    def update_tournament_attribute(cls,
+                                    new_attribute_value,
+                                    attribute_name: str,
+                                    tournament_id: int):
+        """update an attribute in database
+
+                Args:
+                    new_attribute_value (): new value
+                    attribute_name (str): attribut's name
+                    tournament_id (int): id of tournament
+                """
+        ids_list = [tournament_id]
+        TOURNAMENTS_TABLE.update({attribute_name: new_attribute_value},
                                  doc_ids=ids_list)
 
     def exists(self) -> bool:
