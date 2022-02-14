@@ -23,10 +23,10 @@ class Match:
         self.score_player_2 = score_player_2
 
     def __str__(self):
-        return f"([{self.player_1}, {self.score_player_1}], [{self.player_2}, {self.score_player_2}])"
+        return f"({self.match_name})"
 
     def __repr__(self):
-        return f"([{self.player_1}, {self.score_player_1}], [{self.player_2}, {self.score_player_2}])"
+        return f"({self.match_name})"
 
     @property
     def match_name(self) -> Tuple[Player_PlayerScore, Player_PlayerScore]:
@@ -48,7 +48,7 @@ class Match:
                 """
 
         instances_matchs_list = []
-        # get all turn's instance
+        # get all match's instance
         for match_id in matchs_id_list:
             match_dict: dict = MATCHS_TABLE.get(doc_id=match_id)
             matchs_instance = Match(**match_dict)
