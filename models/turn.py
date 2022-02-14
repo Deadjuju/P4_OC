@@ -1,5 +1,6 @@
-"""Turn"""
+"""Model Turn"""
 from datetime import datetime
+from typing import List
 
 from initialisation import DATE_FORMAT, HOURS_FORMAT, TURNS_TABLE
 
@@ -7,7 +8,8 @@ from initialisation import DATE_FORMAT, HOURS_FORMAT, TURNS_TABLE
 class Turn:
     """Turn in a tournament"""
 
-    def __init__(self, tournament_name: str,
+    def __init__(self,
+                 tournament_name: str,
                  matchs=None,
                  current_turn_number: int = 0,
                  start_date_and_time: str = "",
@@ -39,7 +41,15 @@ class Turn:
                f"{self.dates}\n"
 
     @classmethod
-    def get_turns_instances_list(cls, turns_id_list) -> list:
+    def get_turns_instances_list(cls, turns_id_list: List[int]) -> list:
+        """Generate list of Turn instances
+
+                Args:
+                    turns_id_list (list): list of ids matchs
+                Returns:
+                    instances_turns_list (list): list of Matchs Instances
+                """
+
         instances_turns_list = []
         # get all turn's instance
         for turn_id in turns_id_list:
@@ -69,6 +79,6 @@ class Turn:
 if __name__ == '__main__':
     turn1 = Turn(tournament_name="Test", matchs=[], current_turn_number=1)
 
-    print(turn1.__dict__)
+        print(turn1.__dict__)
     turn1.get_end_date()
     print(turn1.__dict__)
