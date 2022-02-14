@@ -1,4 +1,4 @@
-"""Modele Match"""
+"""Model Match"""
 
 from typing import Tuple, List
 
@@ -39,7 +39,7 @@ class Match:
 
     @classmethod
     def get_matchs_instances_list(cls, matchs_id_list: List[int]) -> List:
-        """delete a player from database
+        """Generate list of Match instances
 
                 Args:
                     matchs_id_list (list): list of ids matchs
