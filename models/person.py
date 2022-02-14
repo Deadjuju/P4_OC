@@ -1,6 +1,7 @@
-"""Person and Player"""
+"""Classes Person and Player"""
 
 from tinydb import where
+from typing import List
 
 from initialisation import PLAYERS_TABLE
 
@@ -42,9 +43,7 @@ class Player(Person):
                  ranking: int = 0,
                  tournament_score: float = 0,
                  already_faced=None,
-                 alphabetical = False):
-        """Has a first_name, a last_name, a gender and a birthday
-        Has a ranking, a tournament score and a list Already_faced"""
+                 alphabetical=False):
         super().__init__(first_name, last_name, gender, date_of_birth)
         if already_faced is None:
             already_faced = []
@@ -75,7 +74,7 @@ class Player(Person):
                                  & (where('last_name') == self.last_name))
 
     @classmethod
-    def search_player(cls, first_name, last_name) -> list:
+    def search_player(cls, first_name, last_name) -> List:
         """List of players with same characteristics
 
                 Args:
@@ -116,18 +115,21 @@ class Player(Person):
         PLAYERS_TABLE.remove(doc_ids=player_id_list)
 
     @classmethod
-    def make_instances_list(cls, dict_list):
-        return [Player(**player_dict) for player_dict in dict_list]
+    def get_players_instances_list(cls, players_id_list: List[int]) -> List:
+        """Generate list of Players instances
 
-    @classmethod
-    def get_players_instances_list(cls, players_id_list) -> list:
-        players_unsorted_list = []
-        # get all player's instance but unsorted
+                Args:
+                    players_id_list (list): list of ids players
+                Returns:
+                    instances_players_list (list): list of Players Instances
+                """
+
+        instances_players_list = []
         for player_id in players_id_list:
             player_dict: dict = PLAYERS_TABLE.get(doc_id=player_id)
             players_instance = Player(**player_dict)
-            players_unsorted_list.append(players_instance)
-        return players_unsorted_list
+            instances_players_list.append(players_instance)
+        return instances_players_list
 
     def save(self) -> int:
         """ Save an instance of a player in the database
