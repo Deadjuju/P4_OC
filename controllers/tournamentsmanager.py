@@ -1,17 +1,18 @@
 from time import sleep
 import sys
+from typing import List
 
 from controllers.base import Controller
+from controllers.turnsmanager import TurnsManager
 from models.person import Player
 from models.tournament import Tournament
 from models.turn import Turn
-from views.player import PlayerView
 from views.turn import TurnView
 from initialisation import DEFAULT_NUMBER_OF_TURNS, NUMBERS_OF_PLAYERS
-from controllers.turnsmanager import TurnsManager
 
 
 class TournamentController(Controller):
+    """ Tournament Controller """
 
     def __init__(self, view, player_view):
         super().__init__(view)
@@ -114,7 +115,7 @@ class TournamentController(Controller):
         else:
             self.view.warning(message="Ce tournois existe déjà.")
 
-    def get_players(self) -> list:
+    def _get_players(self) -> List[Player]:
         """Generates list of players
 
                 Returns:
@@ -167,7 +168,7 @@ class TournamentController(Controller):
         self.view.information(message=participants)
         return participants
 
-    def find_tournaments_list(self) -> list:
+    def find_tournaments_list(self) -> List:
         """Find in database the list of tournaments who have the same characteristics
 
                 Returns:
@@ -184,12 +185,12 @@ class TournamentController(Controller):
         ).title()
 
         # list of players who have the same characteristics
-        tournaments_list = Tournament.search_tournament(tournament_name=tournament_name,
-                                                        tournament_place=tournament_place)
-        return tournaments_list
+        tournaments_table_list = Tournament.search_tournament(tournament_name=tournament_name,
+                                                              tournament_place=tournament_place)
+        return tournaments_table_list
 
     @classmethod
-    def creating_and_running_the_turn(cls, tournament) -> Turn:
+    def _creating_and_running_the_turn(cls, tournament) -> Turn:
         """Creation and course of a turn
             Args:
                 tournament (Tournament): tournament's instance
@@ -243,7 +244,7 @@ class TournamentController(Controller):
             if choice == "1":
                 # create a tournament
                 tournament = self._create_tournament()
-                participants = self.get_players()
+                participants = self._get_players()
                 tournament.players = participants
 
                 self._save_tournament(tournament=tournament)
@@ -266,7 +267,7 @@ class TournamentController(Controller):
                         sleep(1)
 
                         # collects the turn and stock it in the tournament
-                        turn = self.creating_and_running_the_turn(tournament=tournament)
+                        turn = self._creating_and_running_the_turn(tournament=tournament)
 
                         # save the turn in db
                         # and stock his ID in the list tournament.turns
@@ -295,12 +296,11 @@ class TournamentController(Controller):
 
 
 if __name__ == '__main__':
+    from views.player import PlayerView
     from views.tournament import TournamentView
 
     tournament_manager = TournamentView()
-    player_view = PlayerView()
+    player_view_for_test = PlayerView()
     tournament_control = TournamentController(view=tournament_manager,
-                                              player_view=player_view)
+                                              player_view=player_view_for_test)
     tournament_control.tournaments_manager()
-    # tournament = tournament_control._create_tournament()
-    # print(tournament.__dict__)
