@@ -42,7 +42,7 @@ class Controller:
             except ValueError:
                 self.view.warning(message=f"La date doit être saisie au format {DATE_FORMAT[1]}.")
 
-    def check_yes_or_no(self, message: str, subject, commit_message: Tuple[str]) -> bool:
+    def check_yes_or_no(self, message: str, subject, commit_message: Tuple[str, str]) -> bool:
         """Ask and control a confirmation for an action
                 Args:
                     message (str): Confirmation message
