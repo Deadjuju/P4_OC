@@ -49,12 +49,13 @@ class Reports:
 
 
 class ReportsController:
+    """ Reports Controller """
     def __init__(self, view, player_view, tournament_view):
         self.view = view
         self.player_view = player_view
         self.tournament_view = tournament_view
 
-    def choose_a_report(self) -> str:
+    def _choose_a_report(self) -> str:
         """Ask and check a report's choice
                 Returns:
                     (str): Choice of report
@@ -74,7 +75,7 @@ class ReportsController:
             else:
                 self.view.warning("Choix non autorisé")
 
-    def choose_ranking_or_alphabetical(self):
+    def _choose_ranking_or_alphabetical(self):
         """Ask and check a display mode
                 Returns:
                     (str): display mode
@@ -91,7 +92,7 @@ class ReportsController:
             else:
                 self.view.warning("Choix non autorisé")
 
-    def choose_display_option_tournament(self):
+    def _choose_display_option_tournament(self):
         """Ask and check a display option for a tournament
                 Returns:
                     (str): display option
@@ -118,10 +119,10 @@ class ReportsController:
         # display players
         report_run = True
         while report_run:
-            report_choice = self.choose_a_report()
+            report_choice = self._choose_a_report()
 
             if report_choice == "all players":
-                sorted_report = self.choose_ranking_or_alphabetical()
+                sorted_report = self._choose_ranking_or_alphabetical()
                 if sorted_report == "off":
                     sys.exit()
                 # get list of Players instances
@@ -178,7 +179,7 @@ class ReportsController:
                         players_id_list=players_id_list
                     )
 
-                    sorted_rapport_choice = self.choose_display_option_tournament()
+                    sorted_rapport_choice = self._choose_display_option_tournament()
                     # Tournament / Player Ranking
                     if sorted_rapport_choice == "off":
                         sys.exit()
@@ -243,8 +244,10 @@ if __name__ == '__main__':
     from views.reports import ReportsView
     from views.tournament import TournamentView
 
-    player_view = PlayerView()
-    tournament_view = TournamentView()
+    player_view_for_test = PlayerView()
+    tournament_view_for_test = TournamentView()
     rapports_view = ReportsView()
-    test = ReportsController(view=rapports_view, player_view=player_view, tournament_view=tournament_view)
+    test = ReportsController(view=rapports_view,
+                             player_view=player_view_for_test,
+                             tournament_view=tournament_view_for_test)
     test.generate_a_report()
