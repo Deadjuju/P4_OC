@@ -35,7 +35,8 @@ class Match:
                 (tuple): name of the match
                 """
 
-        return [f"{self.player_1}, {self.score_player_1}"], [f"{self.player_2}, {self.score_player_2}"]
+        return [f"{self.player_1}, {self.score_player_1}"],\
+               [f"{self.player_2}, {self.score_player_2}"]
 
     @classmethod
     def get_matchs_instances_list(cls, matchs_id_list: List[int]) -> List:
@@ -63,5 +64,3 @@ class Match:
                 """
         matchs_table = MATCHS_TABLE
         return matchs_table.insert(self.__dict__)
-
-

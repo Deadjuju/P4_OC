@@ -78,4 +78,3 @@ class Controller:
                 return responses_list.get(choice)
             else:
                 self.view.warning(message=message)
-
