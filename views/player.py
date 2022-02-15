@@ -4,7 +4,7 @@ from views.base import View
 
 
 class PlayerView(View):
-    """Implement the other views."""
+    """Players View"""
 
     @classmethod
     def prompt_to_create_player_or_upload_ranking(cls) -> str:

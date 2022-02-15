@@ -1,14 +1,20 @@
-"""Rapports view."""
+"""Reports view."""
+
 from time import sleep
 
 from views.base import View
 
 
 class ReportsView(View):
-    """Implement the other views."""
+    """ Reports View """
 
     @classmethod
     def display_report(cls, title, elements_list):
+        """
+        Displays each element
+        :param title: reports title
+        :param elements_list: element to display
+        """
         print(title)
         for element in elements_list:
             print(element)
@@ -16,7 +22,10 @@ class ReportsView(View):
             sleep(0.05)
         input("Valider: ")
 
-    def prompt_for_report_choice(self):
+    def prompt_for_report_choice(self) -> str:
+        """
+        :return: user choice
+        """
         choice = input("Tapper:\n"
                        "1 - Pour afficher tous les joueurs\n"
                        "2 - Pour afficher les tournois\n"
@@ -25,14 +34,22 @@ class ReportsView(View):
                        f"{self.CURSOR} ")
         return choice
 
-    def prompt_for_ranking_pr_alphabetical_report(self):
+    def prompt_for_ranking_pr_alphabetical_report(self) -> str:
+        """
+        :return: user choice
+        """
+
         choice = input("Tapper:\n"
                        "1 - Pour afficher les joueurs par ordre de classement \n"
                        "2 - Pour afficher les joueurs par ordre alphabétique\n"
                        f"{self.CURSOR} ")
         return choice
 
-    def prompt_for_display_option_tournament(self):
+    def prompt_for_display_option_tournament(self) -> str:
+        """
+        :return: user choice
+        """
+
         choice = input("Choix:\n"
                        "1 - Pour afficher les joueurs par ordre de classement \n"
                        "2 - Pour afficher les joueurs par ordre alphabétique\n"
