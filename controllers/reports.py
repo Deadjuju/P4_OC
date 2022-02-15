@@ -27,7 +27,9 @@ class Reports:
                 title (str): title name in file
                 """
 
-        path = Path(__file__).resolve().parent.parent / file_name
+        path_to_extract = Path(__file__).resolve().parent.parent / "reports"
+        path_to_extract.mkdir(exist_ok=True)
+        path = path_to_extract / file_name
         with open(path, "a", encoding='utf8') as file:
             file.write(f"{title}\n\n")
         with open(path, "a", encoding='utf8') as file:
