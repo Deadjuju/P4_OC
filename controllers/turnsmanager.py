@@ -6,8 +6,13 @@ from models.turn import Turn
 
 
 class TurnsManager(Controller):
+    """ TurnsManager Controller"""
 
-    def __init__(self, view, tournament_name, turn_number: int, players_id_list: list):
+    def __init__(self,
+                 view,
+                 tournament_name,
+                 turn_number: int,
+                 players_id_list: list):
         super().__init__(view)
         self.tournament_name = tournament_name
         self.turn_number = turn_number
@@ -77,6 +82,8 @@ class TurnsManager(Controller):
 
                 Args:
                     match (Match): Match's instance
+                Return:
+                    (tuple): (player1_score, player2_score)
                 """
 
         self.view.information(message="Rentrez\n"
@@ -85,11 +92,11 @@ class TurnsManager(Controller):
                                       "1 -> pour une victoire\n"
                                       f"----- {match} -----")
         player1_score = self._ask_and_checks_results(player=match.player_1)
-        self._save_player_score(player=match.player_1,
+        self._save_player_score(player=str(match.player_1),
                                 player_score=player1_score)
 
         player2_score = self._ask_and_checks_results(player=match.player_2)
-        self._save_player_score(player=match.player_2,
+        self._save_player_score(player=str(match.player_2),
                                 player_score=player2_score)
 
         return player1_score, player2_score
@@ -129,9 +136,9 @@ class TurnsManager(Controller):
 if __name__ == '__main__':
     from views.turn import TurnView
 
-    players_id_list = [1, 2, 6, 8, 3, 4, 5, 7]
+    players_id_list_for_test = [1, 2, 6, 8, 3, 4, 5, 7]
     turn_in_progress = TurnsManager(view=TurnView,
                                     tournament_name="Tournois test",
                                     turn_number=1,
-                                    players_id_list=players_id_list)
+                                    players_id_list=players_id_list_for_test)
     turn_in_progress.turns_run()
