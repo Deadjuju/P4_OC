@@ -1,16 +1,18 @@
 import sys
+from typing import List
 
 from controllers.base import Controller
 from models.person import Player
 
 
 class PlayerController(Controller):
+    """ Player Controller """
 
     def __init__(self, view):
         super().__init__(view)
 
     def _check_ask_create_player_or_upload_score(self) -> str:
-        """User choice control which allows to select the option to execute
+        """User choices control which allows to select the option to execute
 
                 Returns:
                     choice (str): the desired choice
@@ -53,7 +55,7 @@ class PlayerController(Controller):
         """Create an instance of Player
 
                 Returns:
-                    first_name (str): first name
+                    player (Player): new player instance
                 """
 
         first_name = self._ask_and_check_field(field=self.view.prompt_for_player_first_name,
@@ -68,7 +70,7 @@ class PlayerController(Controller):
                         date_of_birth=date_of_birth)
         return player
 
-    def _find_players_list(self) -> list:
+    def _find_players_list(self) -> List:
         """Find in database the list of players who have the same characteristics
 
                 Returns:
@@ -81,9 +83,9 @@ class PlayerController(Controller):
                                               message="Le champ - nom - ne peut pas être vide.").title()
 
         # list of players who have the same characteristics
-        players = Player.search_player(first_name=first_name,
-                                       last_name=last_name)
-        return players
+        players_table_list = Player.search_player(first_name=first_name,
+                                                  last_name=last_name)
+        return players_table_list
 
     def _edit_or_delete_player(self) -> str:
         """Ask and control user choice: edit a player or delete it
@@ -101,18 +103,15 @@ class PlayerController(Controller):
             else:
                 self.view.information(message="Cette réponse n'est pas autorisé.")
 
-                print()
-                print("")
-
-    def _edit_ranking_or_delete_a_player(self, player):
+    def _edit_ranking_or_delete_a_player(self, player_table):
         """Make action to edit a player or to delete it
 
                 Args:
-                    player (): BeautifulSoup object pointing to the table of characteristics
+                    player_table (): player data
                 """
 
-        player_id = player.doc_id
-        instance_player = Player(**player)
+        player_id = player_table.doc_id
+        instance_player = Player(**player_table)
         choice = self._edit_or_delete_player()
         if choice == "edit":
             new_ranking = self.view.prompt_to_change_score()
@@ -161,7 +160,7 @@ class PlayerController(Controller):
                 if len(players_list) == 1:
                     player = players_list[0]
                     self.view.show_the_player_found(player=True)
-                    self._edit_ranking_or_delete_a_player(player=player)
+                    self._edit_ranking_or_delete_a_player(player_table=player)
                 if len(players_list) == 0:
                     self.view.show_the_player_found(player=False)
 

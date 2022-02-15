@@ -47,7 +47,7 @@ class Controller:
                 Args:
                     message (str): Confirmation message
                     subject (): Subject concerned by the confirmation
-                    commit_message (Tuple[str]): Message that displays the decision
+                    commit_message (Tuple[str, str]): Message that displays the decision
                 Returns:
                     (bool)
                 """
