@@ -43,6 +43,7 @@ class Player(Person):
                  ranking: int = 0,
                  tournament_score: float = 0,
                  already_faced=None,
+                 already_in_tournament: bool = False,
                  alphabetical=False):
         super().__init__(first_name, last_name, gender, date_of_birth)
         if already_faced is None:
@@ -50,6 +51,7 @@ class Player(Person):
         self.ranking = ranking
         self.tournament_score = tournament_score
         self.already_faced = already_faced
+        self. already_in_tournament = already_in_tournament
         self.alphabetical = alphabetical
 
     def __str__(self) -> str:

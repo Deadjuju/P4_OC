@@ -99,10 +99,12 @@ class TournamentController(Controller):
                                 time_control=time_control)
         return tournament
 
-    def _save_tournament(self, tournament: Tournament):
+    def _save_tournament(self, tournament: Tournament) -> bool:
         """Check if the tournament does not exist and save it
             Args:
                 tournament (Tournament): tournament's instance
+            Return:
+                (bool)
                 """
 
         if not tournament.exists():
@@ -112,10 +114,12 @@ class TournamentController(Controller):
                     commit_message=("--- SAUVEGARDE ---", "--- ABANDONS ---")
             ):
                 tournament.save()
+                return True
         else:
             self.view.warning(message="Ce tournois existe déjà.")
+            return False
 
-    def _get_players(self) -> List[Player]:
+    def _get_players(self) -> List[int]:
         """Generates list of players
 
                 Returns:
@@ -146,23 +150,32 @@ class TournamentController(Controller):
                 else:
                     player_id = player.doc_id
                     if player_id not in participants:
+
                         # initialisation: tournament_score=0 & already_faced=[]
                         player_instance = Player(**player)
-                        player_instance.update_attribute(
-                            new_attribute_value=0,
-                            attribute_name="tournament_score",
-                            player_id=player_id
-                        )
-                        player_instance.update_attribute(
-                            new_attribute_value=[],
-                            attribute_name="already_faced",
-                            player_id=player_id
-                        )
+                        if not player_instance.already_in_tournament:
+                            # player_instance.update_attribute(
+                            #     new_attribute_value=0,
+                            #     attribute_name="tournament_score",
+                            #     player_id=player_id
+                            # )
+                            # player_instance.update_attribute(
+                            #     new_attribute_value=[],
+                            #     attribute_name="already_faced",
+                            #     player_id=player_id
+                            # )
+                            # player_instance.update_attribute(
+                            #     new_attribute_value=True,
+                            #     attribute_name="already_in_tournament",
+                            #     player_id=player_id
+                            # )
 
-                        participants.append(player_id)
-                        print(players_list)
-                        i += 1
-                        inscription = False
+                            participants.append(player_id)
+                            print(players_list)
+                            i += 1
+                            inscription = False
+                        else:
+                            self.view.warning(message="Ce joueur participe déjà à un tournois")
                     else:
                         self.view.warning(message="Ce joueur est déjà inscrit au tournois.")
         self.view.information(message=participants)
@@ -247,7 +260,23 @@ class TournamentController(Controller):
                 participants = self._get_players()
                 tournament.players = participants
 
-                self._save_tournament(tournament=tournament)
+                if self._save_tournament(tournament=tournament):
+                    for id_participant in participants:
+                        Player.update_attribute(
+                            new_attribute_value=0,
+                            attribute_name="tournament_score",
+                            player_id=id_participant
+                        )
+                        Player.update_attribute(
+                            new_attribute_value=[],
+                            attribute_name="already_faced",
+                            player_id=id_participant
+                        )
+                        Player.update_attribute(
+                            new_attribute_value=True,
+                            attribute_name="already_in_tournament",
+                            player_id=id_participant
+                        )
 
             if choice == "2":
                 # Load a tournament
