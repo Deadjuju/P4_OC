@@ -154,21 +154,6 @@ class TournamentController(Controller):
                         # initialisation: tournament_score=0 & already_faced=[]
                         player_instance = Player(**player)
                         if not player_instance.already_in_tournament:
-                            # player_instance.update_attribute(
-                            #     new_attribute_value=0,
-                            #     attribute_name="tournament_score",
-                            #     player_id=player_id
-                            # )
-                            # player_instance.update_attribute(
-                            #     new_attribute_value=[],
-                            #     attribute_name="already_faced",
-                            #     player_id=player_id
-                            # )
-                            # player_instance.update_attribute(
-                            #     new_attribute_value=True,
-                            #     attribute_name="already_in_tournament",
-                            #     player_id=player_id
-                            # )
 
                             participants.append(player_id)
                             print(players_list)
@@ -180,6 +165,27 @@ class TournamentController(Controller):
                         self.view.warning(message="Ce joueur est déjà inscrit au tournois.")
         self.view.information(message=participants)
         return participants
+
+    @classmethod
+    def _update_attributes(cls, id_participants_lists: List[int]):
+        """Update each players in database before begining first turn"""
+
+        for id_participant in id_participants_lists:
+            Player.update_attribute(
+                new_attribute_value=0,
+                attribute_name="tournament_score",
+                player_id=id_participant
+            )
+            Player.update_attribute(
+                new_attribute_value=[],
+                attribute_name="already_faced",
+                player_id=id_participant
+            )
+            Player.update_attribute(
+                new_attribute_value=True,
+                attribute_name="already_in_tournament",
+                player_id=id_participant
+            )
 
     def find_tournaments_list(self) -> List:
         """Find in database the list of tournaments who have the same characteristics
@@ -261,22 +267,7 @@ class TournamentController(Controller):
                 tournament.players = participants
 
                 if self._save_tournament(tournament=tournament):
-                    for id_participant in participants:
-                        Player.update_attribute(
-                            new_attribute_value=0,
-                            attribute_name="tournament_score",
-                            player_id=id_participant
-                        )
-                        Player.update_attribute(
-                            new_attribute_value=[],
-                            attribute_name="already_faced",
-                            player_id=id_participant
-                        )
-                        Player.update_attribute(
-                            new_attribute_value=True,
-                            attribute_name="already_in_tournament",
-                            player_id=id_participant
-                        )
+                    self._update_attributes(id_participants_lists=participants)
 
             if choice == "2":
                 # Load a tournament
