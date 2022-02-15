@@ -2,17 +2,16 @@ import sys
 from pathlib import Path
 from typing import List
 
-from controllers.tournamentsmanager import TournamentController, FindTournament
-from initialisation import PLAYERS_TABLE, TOURNAMENTS_TABLE, TURNS_TABLE, MATCHS_TABLE
+from initialisation import PLAYERS_TABLE, TOURNAMENTS_TABLE
+from controllers.tournamentsmanager import TournamentController
 from models.match import Match
 from models.person import Player
 from models.tournament import Tournament
 from models.turn import Turn
-from views.reports import ReportsView
-from views.tournament import TournamentView
 
 
 class Reports:
+    """Generate and export report"""
     def __init__(self, view, export: bool = False, title_report: str = "", file_name: str = ""):
         self.view = view
         self.export = export
@@ -36,7 +35,7 @@ class Reports:
                 file.write(f"•  {element}\n\n")
 
     def display_run(self, elements_list: List):
-        """Export report in format txt
+        """Display report and export it in format txt if wanted
             Args:
                 elements_list (List): list of class (Player, Tournaments, Turns or Matchs) instances
                 """
@@ -48,10 +47,10 @@ class Reports:
 
 
 class ReportsController:
-    def __init__(self, view, tournament_view):
+    def __init__(self, view, player_view, tournament_view):
         self.view = view
+        self.player_view = player_view
         self.tournament_view = tournament_view
-        self.find_tournament = FindTournament(view=tournament_view)
 
     def choose_a_report(self) -> str:
         """Ask and check a report's choice
@@ -161,7 +160,9 @@ class ReportsController:
             # rapport for a tournament
             if report_choice == "select tournament":
                 self.view.information(message="---- CHARGER UN TOURNOIS ----")
-                tournaments_list = self.find_tournament.find_tournaments_list()
+                tournaments_controller = TournamentController(view=self.tournament_view,
+                                                              player_view=self.player_view)
+                tournaments_list = tournaments_controller.find_tournaments_list()
 
                 if len(tournaments_list) == 1:
                     tournament_dict = tournaments_list[0]
@@ -236,8 +237,12 @@ class ReportsController:
 
 
 if __name__ == '__main__':
-    tournament_manager = TournamentView()
+    from views.player import PlayerView
+    from views.reports import ReportsView
+    from views.tournament import TournamentView
+
+    player_view = PlayerView()
+    tournament_view = TournamentView()
     rapports_view = ReportsView()
-    test = ReportsController(view=rapports_view, tournament_view=tournament_manager)
+    test = ReportsController(view=rapports_view, player_view=player_view, tournament_view=tournament_view)
     test.generate_a_report()
-    
