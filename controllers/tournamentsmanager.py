@@ -167,7 +167,9 @@ class TournamentController(Controller):
         return participants
 
     @classmethod
-    def _update_attributes(cls, id_participants_lists: List[int]):
+    def _initialise_attributes(cls,
+                               id_participants_lists: List[int],
+                               is_in_tournament: bool):
         """Update each players in database before begining first turn"""
 
         for id_participant in id_participants_lists:
@@ -182,7 +184,7 @@ class TournamentController(Controller):
                 player_id=id_participant
             )
             Player.update_attribute(
-                new_attribute_value=True,
+                new_attribute_value=is_in_tournament,
                 attribute_name="already_in_tournament",
                 player_id=id_participant
             )
@@ -267,7 +269,8 @@ class TournamentController(Controller):
                 tournament.players = participants
 
                 if self._save_tournament(tournament=tournament):
-                    self._update_attributes(id_participants_lists=participants)
+                    self._initialise_attributes(id_participants_lists=participants,
+                                                is_in_tournament=True)
 
             if choice == "2":
                 # Load a tournament
@@ -299,6 +302,9 @@ class TournamentController(Controller):
 
                         if tournament.actual_turn == DEFAULT_NUMBER_OF_TURNS + 1:
                             tournament.is_finish = True
+                            participants = tournament.players
+                            self._initialise_attributes(id_participants_lists=participants,
+                                                        is_in_tournament=False)
 
                         self.view.information(message="TOURNAMENT")
                         self.view.information(message=tournament.__dict__)
