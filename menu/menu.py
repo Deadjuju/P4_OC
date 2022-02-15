@@ -16,15 +16,15 @@ class MenuView(View):
                     user_choice (str): User choice
                 """
 
-        print("__________________________________________________\n"
-              "__________________________________________________\n"
-              "*********         MENU PRINCIPAL         *********\n"
-              "__________________________________________________\n"
-              "__________________________________________________\n")
-        user_choice = input("****    Pour gérer les joueurs, tapez '1'\n"
-                            "****    Pour gérer les tournois, tapez '2'\n"
-                            "****    Pour générer des rapports, tappez '3'\n"
-                            "****    Pour quitter, tappez 'off'"
+        print("______________________________________________________\n"
+              "______________________________________________________\n"
+              "***********         MENU PRINCIPAL         ***********\n"
+              "______________________________________________________\n"
+              "______________________________________________________\n")
+        user_choice = input("****    Pour gérer les joueurs,     ---> tapez '1'\n"
+                            "****    Pour gérer les tournois,    ---> tapez '2'\n"
+                            "****    Pour générer des rapports,  ---> tappez '3'\n"
+                            "****    Pour quitter,               ---> tappez 'off'"
                             f"{View.CURSOR}  ")
         return user_choice
 
