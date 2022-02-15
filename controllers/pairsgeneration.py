@@ -1,23 +1,25 @@
+from typing import List
+
 from models.person import Player
-from initialisation import PLAYERS_TABLE
 
 
 class GenerationOfPairs:
+    """ Generate player pairs """
 
     def __init__(self, players_id_list):
         self.players_id_list = players_id_list
 
-    # def get_instances_list(self) -> list:
-    #     players_unsorted_list = []
-    #     # get all player's instance but unsorted
-    #     for player_id in self.players_id_list:
-    #         player_dict: dict = PLAYERS_TABLE.get(doc_id=player_id)
-    #         players_instance = Player(**player_dict)
-    #         players_unsorted_list.append(players_instance)
-    #     return players_unsorted_list
-    #
     @classmethod
-    def sort_the_list(cls, players_unsorted_list):
+    def _sort_the_list(cls, players_unsorted_list: List[Player]):
+        """Make action to edit a player or to delete it
+
+                Args:
+                    players_unsorted_list (list): List of player instances Unsorted
+                Return:
+                    players_instance_list_sorted (list): List of player instances Sorted
+                                                         by their rank in a tournament
+                                                         and their total rank
+                """
 
         players_instance_list_sorted = []
 
@@ -25,9 +27,7 @@ class GenerationOfPairs:
             provisional_players_instance_list = []
 
             # Generate score list
-            players_score_list = []
-            for player in players_unsorted_list:
-                players_score_list.append(player.tournament_score)
+            players_score_list = [player.tournament_score for player in players_unsorted_list]
 
             max_value = None
             ids_list = []
@@ -56,13 +56,17 @@ class GenerationOfPairs:
         return players_instance_list_sorted
 
     @classmethod
-    def generate_pairs_list(cls, half_player_list_length, players_instance_list):
-        # Générer les paires
-        # Le meilleur de chaque liste s'affronte et est retiré de la liste
-        # -> Adversaire marqué dans la liste des adversaires
-        # Et on recommence tant qu'il y a des joueurs
+    def _generate_pairs_list(cls,
+                             half_player_list_length: int,
+                             players_instance_list: List[Player]):
+        """Generates new pairs of players according to their order
 
-        print("-" * 50)
+                Args:
+                    half_player_list_length (int): Half length of players list
+                    players_instance_list (list): List of worst players
+                Return:
+                    players_instance_list_sorted (list): List of player instances Sorted
+                """
 
         # Split player instances into two lists
         best_players_list = players_instance_list[:half_player_list_length]
@@ -85,14 +89,9 @@ class GenerationOfPairs:
                 player2 = worst_players_list[i]
                 player2_id = Player.search_player(first_name=player2.first_name,
                                                   last_name=player2.last_name)[0].doc_id
-                print("PLAYER 2 ID")
-                print(player2_id)
 
                 if player2_id not in best1.already_faced:
                     best2 = worst_players_list.pop(0 + i)
-                    print(best2)
-                    print(best2.already_faced)
-                    print(type(best2))
 
                     best1_already_faced = best1.already_faced
                     best2_already_faced = best2.already_faced
@@ -124,18 +123,23 @@ class GenerationOfPairs:
         return pairs_list
 
     def swiss_system(self):
+        """Swiss System Algorithm
+
+                Return:
+                    List of player pairs
+                """
         # players_unsorted_list = self.get_instances_list()
         players_unsorted_list = Player.get_players_instances_list(
             players_id_list=self.players_id_list
         )
-        players_instance_list_sorted = self.sort_the_list(
+        players_instance_list_sorted = self._sort_the_list(
             players_unsorted_list=players_unsorted_list
         )
 
         # cut players_instance_list_sorted in 2 lists: bests and worsts
         half_player_list_length = int(len(players_instance_list_sorted) / 2)
 
-        pairs_list = self.generate_pairs_list(
+        pairs_list = self._generate_pairs_list(
             half_player_list_length=half_player_list_length,
             players_instance_list=players_instance_list_sorted
         )
@@ -144,7 +148,7 @@ class GenerationOfPairs:
 
 
 if __name__ == '__main__':
-    players_id_list = [1, 2, 6, 8, 3, 4, 5, 7]
-    generating_pairs = GenerationOfPairs(players_id_list=players_id_list)
-    pairs = generating_pairs.swiss_system()
+    players_id_list_example = [1, 2, 6, 8, 3, 4, 5, 7]
+    generating_pairs_for_test = GenerationOfPairs(players_id_list=players_id_list_example)
+    pairs = generating_pairs_for_test.swiss_system()
     print(pairs)
