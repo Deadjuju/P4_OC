@@ -13,11 +13,14 @@ class TournamentView(View):
         """
 
         print("Que voulez-vous faire? Tapez:")
-        return input(f"|{'-' * 42}|\n"
-                     "| 1  --> Pour créer un tournois -----------|\n"
-                     "| 2  --> Pour charger un tournois ---------|\n"
-                     "| 3  --> Pour revenir en arrière ----------|\n"
-                     f"|{'-' * 42}|"
+        return input(f""
+                     f"\n"
+                     f"|{'-' * 76}|\n"
+                     "|______________________||   > GESTION DE TOURNOIS    ||______________________|\n"
+                     "|   1    ---> Pour créer un tournois    -------------------------------------|\n"
+                     "|   2    --->  Pour charger un tournois et l'exécuter    --------------------|\n"
+                     "|   off  --->  Pour quitter le programme    ---------------------------------|\n"
+                     f"|{'-' * 76}|"
                      f"{View.CURSOR}")
 
     @classmethod

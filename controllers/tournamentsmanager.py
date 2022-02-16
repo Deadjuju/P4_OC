@@ -31,12 +31,10 @@ class TournamentController(Controller):
                 return "1"
             elif choice == "2":
                 return "2"
-            elif choice.lower() == "return" or choice.lower() == "retour" or choice == "3":
-                return "return"
-            elif choice == "off":
+            elif choice == "off" or choice == "quit":
                 return "off"
             else:
-                self.view.warning(message="Merci de renseigner 1, 2 ou 3.")
+                self.view.warning(message="Merci de renseigner 1, 2 ou off.")
 
     def ask_and_check_time_control_field(self) -> str:
         """Prompt to choose a time control mode
@@ -316,9 +314,6 @@ class TournamentController(Controller):
 
                 if len(tournaments_list) == 0:
                     self.view.show_the_tournament_found(tournament=False)
-
-            if choice == "return":
-                tournaments_manager_run = False
 
 
 if __name__ == '__main__':
