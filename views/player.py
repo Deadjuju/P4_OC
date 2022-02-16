@@ -9,12 +9,13 @@ class PlayerView(View):
     @classmethod
     def prompt_to_create_player_or_upload_ranking(cls) -> str:
         """Prompt for a user choice."""
-        print("Que voulez-vous faire? Tapez:")
-        return input(f"|{'-' * 70}|\n"
-                     "| 1  -->  Pour créer un joueur   --------------------------------------|\n"
-                     "| 2  -->  Pour mettre à jour le classement / supprimer un joueur   ----|\n"
-                     "| 3  -->  Pour revenir en arrière   -----------------------------------|\n"
-                     f"|{'-' * 70}|"
+        return input("\n"
+                     "|______________________||   > GESTION DES JOUEURS    ||______________________|\n"
+                     f"|{'-' * 76}|\n"
+                     "|   1    --->  Pour créer un joueur    --------------------------------------|\n"
+                     "|   2    --->  Pour mettre à jour le classement / supprimer un joueur    ----|\n"
+                     "|   off  --->  Pour quitter le programme    ---------------------------------|\n"
+                     f"|{'-' * 76}|"
                      f"{View.CURSOR}")
 
     @classmethod

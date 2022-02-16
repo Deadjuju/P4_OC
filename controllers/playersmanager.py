@@ -19,16 +19,14 @@ class PlayerController(Controller):
                 """
         while True:
             choice = self.view.prompt_to_create_player_or_upload_ranking()
-            if choice == "1":
+            if choice == "1" or choice == "create":
                 return "1"
             elif choice == "2":
                 return "2"
-            elif choice.lower() == "return" or choice.lower() == "retour" or choice == "3":
-                return "return"
-            elif choice == "off":
+            elif choice == "off" or choice == "quit":
                 return "off"
             else:
-                self.view.warning(message="Merci de renseigner 1, 2 ou 3.")
+                self.view.warning(message="Merci de renseigner 1, 2 ou off.")
 
     def _ask_gender(self) -> str:
         """Ask and control of the gender field
@@ -136,10 +134,6 @@ class PlayerController(Controller):
             if choice == "off":
                 self.view.information(message="A BIENTOT!!!")
                 sys.exit()
-
-            elif choice == "return":
-                self.view.information(message="---- RETOUR EN ARRIERE ----")
-                return
 
             elif choice == "1":
                 self.view.information(message="Création d'un joueur: ")
