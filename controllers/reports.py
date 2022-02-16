@@ -133,7 +133,7 @@ class ReportsController:
                 if sorted_report == "ranking":
                     players_list.sort()
                     rapport = Reports(view=self.view,
-                                      export=True,
+                                      export=False,
                                       title_report="TOUS LES JOUEURS",
                                       file_name="players_ranking.txt")
                     rapport.display_run(elements_list=players_list)
@@ -145,7 +145,7 @@ class ReportsController:
                         players_list_alphabet.append(player_instance)
                     players_list_alphabet.sort()
                     rapport = Reports(view=self.view,
-                                      export=True,
+                                      export=False,
                                       title_report="TOUS LES JOUEURS",
                                       file_name="players_alphabetical.txt")
                     rapport.display_run(elements_list=players_list_alphabet)
@@ -155,7 +155,7 @@ class ReportsController:
                 tournaments_dict_list = TOURNAMENTS_TABLE.all()
                 tournaments_list = [Tournament(**dict) for dict in tournaments_dict_list]
                 rapport = Reports(view=self.view,
-                                  export=True,
+                                  export=False,
                                   title_report="TOUS LES TOURNOIS",
                                   file_name="tournaments.txt")
                 rapport.display_run(elements_list=tournaments_list)
@@ -186,7 +186,7 @@ class ReportsController:
                     if sorted_rapport_choice == "ranking":
                         players_unsorted_list.sort()
                         rapport = Reports(view=self.view,
-                                          export=True,
+                                          export=False,
                                           title_report="LISTE DES JOUEURS:",
                                           file_name=f"{tournament.tournament_name}_ranking_players.txt")
                         rapport.display_run(elements_list=players_unsorted_list)
@@ -199,7 +199,7 @@ class ReportsController:
                             players_list.append(player_instance)
                         players_list.sort()
                         rapport = Reports(view=self.view,
-                                          export=True,
+                                          export=False,
                                           title_report="LISTE DES JOUEURS:",
                                           file_name=f"{tournament.tournament_name}_alphabetical_players.txt")
                         rapport.display_run(elements_list=players_list)
