@@ -25,23 +25,24 @@ class Turn:
         self.end_date_and_time = end_date_and_time
 
     @property
-    def tour_name(self):
+    def tour_name(self) -> str:
         return f"Round {self.current_turn_number}"
 
     @property
-    def dates(self):
+    def dates(self) -> str:
+        """Return Start date + End date as string"""
         return f"{self.start_date_and_time} | {self.end_date_and_time}"
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.tournament_name} - {self.tour_name}\n" \
                f"{self.dates}\n"
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"{self.tournament_name} - {self.tour_name}\n" \
                f"{self.dates}\n"
 
     @classmethod
-    def get_turns_instances_list(cls, turns_id_list: List[int]) -> list:
+    def get_turns_instances_list(cls, turns_id_list: List[int]) -> List:
         """Generate list of Turn instances
 
                 Args:
@@ -58,11 +59,11 @@ class Turn:
             instances_turns_list.append(turns_instance)
         return instances_turns_list
 
-    def get_start_date(self):
+    def get_start_date(self) -> None:
         """Get the date when the round starts """
         self.start_date_and_time = datetime.now().strftime(f"{DATE_FORMAT[0]} {HOURS_FORMAT}")
 
-    def get_end_date(self):
+    def get_end_date(self) -> None:
         """Get the date when the round ends """
         self.end_date_and_time = datetime.now().strftime(f"{DATE_FORMAT[0]} {HOURS_FORMAT}")
 
